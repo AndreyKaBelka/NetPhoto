@@ -15,6 +15,7 @@ public class Client {
             in=socket.getInputStream();
             DataInputStream clientData = new DataInputStream(in);
             String fileName = clientData.readUTF();
+            //fileName = clientData.readUTF();
             System.out.println(fileName);
             OutputStream output = new FileOutputStream("C:/Users/Power/Downloads/"+ fileName);
             byte[] buffer = new byte[bufferSize];
