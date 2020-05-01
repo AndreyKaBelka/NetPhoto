@@ -1,32 +1,37 @@
 import java.io.*;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Client {
 
-    public static void main(String[] args) throws FileNotFoundException {
-        int bytesRead;
-        InputStream in;
-        int bufferSize;
+    public static void main(String[] args) throws IOException {
 
-        try {
-            Socket socket = new Socket(InetAddress.getLocalHost(), 8030);
-            bufferSize=socket.getReceiveBufferSize();
-            in=socket.getInputStream();
-            DataInputStream clientData = new DataInputStream(in);
-            String fileName = clientData.readUTF();
-            //fileName = clientData.readUTF();
-            System.out.println(fileName);
-            OutputStream output = new FileOutputStream("C:/Users/Power/Downloads/"+ fileName);
-            byte[] buffer = new byte[bufferSize];
-            int read;
-            while((read = clientData.read(buffer)) != -1){
-                output.write(buffer, 0, read);
-            }
+        String dirPath = "C:/Users/Power/Downloads/";
 
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        Socket socket = new Socket(InetAddress.getLocalHost(), 8030);
+        BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
+        DataInputStream dis = new DataInputStream(bis);
+
+        int filesCount = dis.readInt();
+        File[] files = new File[filesCount];
+
+        for(int i = 0; i < filesCount; i++)
+        {
+            long fileLength = dis.readLong();
+            String fileName = dis.readUTF();
+
+            files[i] = new File(dirPath + "/" + fileName);
+
+            FileOutputStream fos = new FileOutputStream(files[i]);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+            for(int j = 0; j < fileLength; j++) bos.write(bis.read());
+
+            bos.close();
         }
+
+        dis.close();
     }
+
 }
