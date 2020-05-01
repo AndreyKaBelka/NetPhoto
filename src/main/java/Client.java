@@ -7,7 +7,7 @@ public class Client {
     public static void main(String[] args) throws FileNotFoundException {
         int bytesRead;
         InputStream in;
-        int bufferSize=0;
+        int bufferSize;
 
         try {
             Socket socket = new Socket(InetAddress.getLocalHost(), 8030);
