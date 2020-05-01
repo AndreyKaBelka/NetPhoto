@@ -6,7 +6,7 @@ public class Server {
 
     public static void main(String[] args) throws IOException {
         ServerSocket server = new ServerSocket(8030);//запускаем сервер на порту 8030
-        Socket socket = null;
+        Socket socket;
         socket = server.accept();
         final File myFile= new File("D:/4game/icons"); //sdcard/DCIM.JPG
         byte[] mybytearray = new byte[8192];
