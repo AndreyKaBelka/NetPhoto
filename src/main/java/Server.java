@@ -1,12 +1,11 @@
 import java.io.*;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
 
     public static void main(String[] args) throws IOException {
-        String directory = "D:/4game/icons";
+        String directory = "D:/kartinki";
         ServerSocket server = new ServerSocket(8030);
         File[] files = new File(directory).listFiles();
         Socket socket ;
@@ -29,6 +28,7 @@ public class Server {
             while((theByte = bis.read()) != -1) bos.write(theByte);
 
             bis.close();
+
         }
 
         dos.close();
