@@ -1,3 +1,5 @@
+package com.album;
+
 import java.util.ArrayList;
 
 public class Base64 {

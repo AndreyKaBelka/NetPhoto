@@ -1,3 +1,5 @@
+package com.album;
+
 import javax.imageio.*;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.FileImageOutputStream;
@@ -8,11 +10,17 @@ import java.net.Socket;
 
 public class Client {
 
-    public static void main(String[] args) throws IOException {
+    private static Socket socket;
+
+    Client(String IP) throws IOException {
+        socket = new Socket(IP, 8030);
+    }
+
+    public static void download(String dir) throws IOException {
 
         String dirPath = "C:/Users/Power/Downloads/";
 
-        Socket socket = new Socket(InetAddress.getLocalHost(), 8030);
+        socket = new Socket(InetAddress.getLocalHost(), 8030);
         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
         DataInputStream dis = new DataInputStream(bis);
 
@@ -37,8 +45,6 @@ public class Client {
             capture = ImageIO.read(new ByteArrayInputStream(byteArray));
             writer.write(null, new IIOImage(capture, null, null), jpegParams);
         }
-
         dis.close();
     }
-
 }

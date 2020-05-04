@@ -11,7 +11,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.album.Controller">
    <children>
       <ImageView fitHeight="400.0" fitWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <image>
@@ -52,5 +52,47 @@
          </font>
       </Button>
       <TextArea fx:id="TextGeneratedKey" layoutX="284.0" layoutY="298.0" prefHeight="34.0" prefWidth="212.0" promptText="Ключ сессии" visible="false" />
+      <ImageView fx:id="ImageOk" fitHeight="34.0" fitWidth="35.0" layoutX="69.0" layoutY="298.0" visible="false">
+         <image>
+            <Image url="@img/ok.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="ImageBan" fitHeight="36.0" fitWidth="35.0" layoutX="69.0" layoutY="297.0" visible="false">
+         <image>
+            <Image url="@img/ban.png" />
+         </image>
+      </ImageView>
+      <TextArea fx:id="TextKey" layoutX="111.0" layoutY="115.0" prefHeight="34.0" prefWidth="389.0" promptText="Введите ключ сессии" visible="false">
+         <font>
+            <Font name="Arial" size="21.0" />
+         </font>
+      </TextArea>
+      <Button fx:id="ButtonConnect" layoutX="222.0" layoutY="200.0" mnemonicParsing="false" opacity="0.47" prefHeight="69.0" prefWidth="157.0" style="-fx-background-color: #42aaff;" text="Подключиться" textAlignment="CENTER" textFill="WHITE" visible="false">
+         <font>
+            <Font name="Verdana" size="16.0" />
+         </font>
+      </Button>
+      <ImageView fx:id="ImageLoading" fitHeight="112.0" fitWidth="200.0" layoutX="200.0" layoutY="144.0" visible="false">
+         <image>
+            <Image url="@img/loading.gif" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="ImageBan1" fitHeight="36.0" fitWidth="35.0" layoutX="283.0" layoutY="314.0" visible="false">
+         <image>
+            <Image url="@img/ban.png" />
+         </image>
+      </ImageView>
+      <TextArea fx:id="TextTemp1" layoutX="84.0" layoutY="10.0" prefHeight="200.0" prefWidth="431.0" visible="false" />
+      <Button fx:id="ButtonBrowse1" layoutX="325.0" layoutY="238.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="68.0" text="Обзор" textAlignment="CENTER" visible="false">
+         <font>
+            <Font name="Calibri" size="14.0" />
+         </font>
+      </Button>
+      <TextArea fx:id="TextPath1" layoutX="97.0" layoutY="238.0" prefHeight="34.0" prefWidth="212.0" visible="false" />
+      <Button fx:id="ButtonStart1" layoutX="141.0" layoutY="327.0" mnemonicParsing="false" text="Загрузить" visible="false">
+         <font>
+            <Font name="Calibri" size="19.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

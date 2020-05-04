@@ -1,14 +1,16 @@
+package com.album;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
 
-    public static void main(String[] args) throws IOException {
-        String directory = "D:/kartinki";
+    public void server_start(String dir) throws IOException {
+        String directory = dir;
         ServerSocket server = new ServerSocket(8030);
         File[] files = new File(directory).listFiles();
-        Socket socket ;
+        Socket socket;
         socket = server.accept();
         BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
         DataOutputStream dos = new DataOutputStream(bos);
@@ -30,7 +32,6 @@ public class Server {
             bis.close();
 
         }
-
         dos.close();
     }
 }

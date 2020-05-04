@@ -1,3 +1,5 @@
+package com.album;
+
 import java.io.File;
 
 public class Photo {
