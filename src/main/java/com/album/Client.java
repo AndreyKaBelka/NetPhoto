@@ -10,17 +10,17 @@ import java.net.Socket;
 
 public class Client {
 
-    private static Socket socket;
+    private Socket socket;
 
-    Client(String IP) throws IOException {
+    public void connect(String IP) throws IOException {
         socket = new Socket(IP, 8030);
     }
 
-    public static void download(String dir) throws IOException {
+    public void download(String dir) throws IOException {
 
-        String dirPath = "C:/Users/Power/Downloads/";
+        String dirPath = dir;
 
-        socket = new Socket(InetAddress.getLocalHost(), 8030);
+        //socket = new Socket(InetAddress.getLocalHost(), 8030);
         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
         DataInputStream dis = new DataInputStream(bis);
 

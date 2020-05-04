@@ -71,6 +71,7 @@ public class Controller {
     void initialize() throws IOException {
 
         AtomicReference<String> pathdir = new AtomicReference<>(new String( ));
+        AtomicReference<Client> client = new AtomicReference<>(new Client( ));
 
         ButtonUser1.setOnAction(actionEvent -> {
             ButtonUser1.setVisible(false);
@@ -123,11 +124,12 @@ public class Controller {
             ButtonConnect.setVisible(false);
             ImageLoading.setVisible(true);
             try {
-                Client client = new Client(Crypt.decrypt(TextKey.getText()).substring(8));
+                client.get().connect(Crypt.decrypt(TextKey.getText( )).substring(8));
                 TextPath1.setVisible(true);
                 TextTemp1.setVisible(true);
                 ButtonStart1.setVisible(true);
                 ButtonBrowse1.setVisible(true);
+                ImageLoading.setVisible(false);
             } catch (StringIndexOutOfBoundsException | IOException | ArrayIndexOutOfBoundsException e) {
                 e.printStackTrace();
                 ImageLoading.setVisible(false);
@@ -135,6 +137,31 @@ public class Controller {
                 ButtonConnect.setVisible(true);
                 ImageBan1.setVisible(true);
             }
+        });
+
+        ButtonBrowse1.setOnAction(actionEvent -> {
+            final DirectoryChooser dirChooser = new DirectoryChooser();
+            File dir = dirChooser.showDialog(null);
+            if (dir != null) {
+                TextPath1.setText(dir.getAbsolutePath());
+                pathdir.set(dir.getAbsolutePath());
+            } else {
+                TextPath1.setText(null);
+            }
+        });
+
+        ButtonStart1.setOnAction(actionEvent -> {
+            new Thread(() -> {
+                try {
+                    ImageLoading.setVisible(true);
+                    client.get().download(pathdir.get());
+                    ImageOk.setVisible(true);
+                    ImageLoading.setVisible(false);
+                } catch (IOException e) {
+                    e.printStackTrace( );
+                    ImageBan.setVisible(true);
+                    ImageLoading.setVisible(false);
+                }}).start();
         });
     }
 }
