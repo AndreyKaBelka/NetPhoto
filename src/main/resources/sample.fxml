@@ -84,7 +84,7 @@
          </font>
       </Button>
       <TextArea fx:id="TextPath1" layoutX="97.0" layoutY="238.0" prefHeight="34.0" prefWidth="212.0" visible="false" />
-      <Button fx:id="ButtonStart1" layoutX="131.0" layoutY="297.0" mnemonicParsing="false" text="Загрузить">
+      <Button fx:id="ButtonStart1" layoutX="131.0" layoutY="297.0" mnemonicParsing="false" text="Загрузить" visible="false">
          <font>
             <Font name="Calibri" size="19.0" />
          </font>
