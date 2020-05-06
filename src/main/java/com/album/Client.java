@@ -17,13 +17,9 @@ public class Client {
     }
 
     public void download(String dir) throws IOException {
-
         String dirPath = dir;
-
-        //socket = new Socket(InetAddress.getLocalHost(), 8030);
         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
         DataInputStream dis = new DataInputStream(bis);
-
         int filesCount = dis.readInt();
         File[] files = new File[filesCount];
         JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);

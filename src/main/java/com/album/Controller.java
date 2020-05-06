@@ -1,5 +1,6 @@
 package com.album;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -8,6 +9,7 @@ import javafx.stage.DirectoryChooser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -68,6 +70,9 @@ public class Controller {
     private Button ButtonBrowse1;
 
     @FXML
+    private ProgressBar SessionTime;
+
+    @FXML
     void initialize() throws IOException {
 
         AtomicReference<String> pathdir = new AtomicReference<>(new String( ));
@@ -82,6 +87,7 @@ public class Controller {
             TextTemp.setVisible(true);
             ButtonStart.setVisible(true);
             ButtonBrowse.setVisible(true);
+            SessionTime.setVisible(true);
         });
 
         ButtonBrowse.setOnAction(actionEvent -> {
@@ -109,6 +115,13 @@ public class Controller {
                 e.printStackTrace( );
                 ImageBan.setVisible(true);
             }}).start();
+            new Thread(() -> {
+                while(true) {
+                    Date date = new Date();
+                    SessionTime.setProgress((double) date.getTime( )%100000/100000);
+                    System.out.println((double)date.getTime( )%100000/100000);
+                }
+                }).start();
         });
 
         ButtonUser2.setOnAction(actionEvent -> {
@@ -124,7 +137,7 @@ public class Controller {
             ButtonConnect.setVisible(false);
             ImageLoading.setVisible(true);
             try {
-                client.get().connect(Crypt.decrypt(TextKey.getText( )).substring(8));
+                client.get().connect(Crypt.decrypt(TextKey.getText( )));
                 TextPath1.setVisible(true);
                 TextTemp1.setVisible(true);
                 ButtonStart1.setVisible(true);

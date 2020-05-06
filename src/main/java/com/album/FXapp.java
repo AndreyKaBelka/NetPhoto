@@ -22,4 +22,10 @@ public class FXapp extends Application {
         primaryStage.show();
     }
 
+    @Override
+
+    public void stop(){
+        //Здесь Вы можете прописать все действия при закрытии Вашего приложения.
+
+    }
 }

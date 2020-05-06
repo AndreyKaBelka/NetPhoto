@@ -8,7 +8,7 @@ public class Server {
 
     public void server_start(String dir) throws IOException {
         String directory = dir;
-        ServerSocket server = new ServerSocket(8189);
+        ServerSocket server = new ServerSocket(8030);
         File[] files = new File(directory).listFiles();
         Socket socket;
         socket = server.accept();

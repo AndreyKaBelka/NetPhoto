@@ -94,5 +94,6 @@
             <Image url="@img/loading.gif" />
          </image>
       </ImageView>
+      <ProgressBar fx:id="SessionTime" layoutX="290.0" layoutY="334.0" prefWidth="200.0" progress="0.0" visible="false" />
    </children>
 </AnchorPane>
