@@ -15,6 +15,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Controller {
 
+    Double timeNow = 0.0;
+
     @FXML
     private Button ButtonUser1;
 
@@ -74,7 +76,6 @@ public class Controller {
 
     @FXML
     void initialize() throws IOException {
-
         AtomicReference<String> pathdir = new AtomicReference<>(new String( ));
         AtomicReference<Client> client = new AtomicReference<>(new Client( ));
 
@@ -118,8 +119,10 @@ public class Controller {
             new Thread(() -> {
                 while(true) {
                     Date date = new Date();
-                    SessionTime.setProgress((double) date.getTime( )%100000/100000);
-                    System.out.println((double)date.getTime( )%100000/100000);
+                    timeNow = (double) date.getTime( )%100000/100000;
+                    SessionTime.setProgress(timeNow);
+                    System.out.println(timeNow);
+                    if (timeNow == 0) TextGeneratedKey.setText(Crypt.encrypt("00"));
                 }
                 }).start();
         });

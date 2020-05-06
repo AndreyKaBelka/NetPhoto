@@ -25,7 +25,6 @@ public class FXapp extends Application {
     @Override
 
     public void stop(){
-        //Здесь Вы можете прописать все действия при закрытии Вашего приложения.
-
+        System.exit(0);
     }
 }
