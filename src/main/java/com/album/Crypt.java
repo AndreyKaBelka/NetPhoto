@@ -18,7 +18,7 @@ public class Crypt {
         Date date = new Date();
         String time = String.valueOf(date.getTime());
         System.out.println(time);
-        time = time.substring(0, 7);
+        time = time.substring(0, time.length()-5);
         System.out.println(time);
         String IP = null;
         try {
@@ -49,7 +49,7 @@ public class Crypt {
         String IDFolder = decrypt.substring(decrypt.length()-2);
         decrypt = decrypt.substring(0, decrypt.length()-2);
         System.out.println(decrypt);
-        String decr = new BigInteger(decrypt).subtract(new BigInteger(time.substring(0,7))).toString();
+        String decr = new BigInteger(decrypt).subtract(new BigInteger(time.substring(0,time.length()-5))).toString();
         System.out.println(decr);
         byte[] decrBytes = new byte[decr.length()/2];
         for (int i = 0; i < decr.length()/2; i++) {
