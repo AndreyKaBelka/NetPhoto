@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Date;
 
 public class Crypt {
@@ -22,10 +20,11 @@ public class Crypt {
         System.out.println(time);
         String IP = null;
         try {
-            URL whatismyip = new URL("http://checkip.amazonaws.com");
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    whatismyip.openStream()));
-            IP = in.readLine(); //you get the IP as a String
+//            URL whatismyip = new URL("http://checkip.amazonaws.com");
+//            BufferedReader in = new BufferedReader(new InputStreamReader(
+//                    whatismyip.openStream()));
+//            IP = in.readLine(); //you get the IP as a String4
+            IP = InetAddress.getLocalHost().getHostAddress();
             System.out.println(IP);
         } catch (IOException e) {
             e.printStackTrace();

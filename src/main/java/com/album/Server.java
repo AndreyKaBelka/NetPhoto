@@ -26,7 +26,7 @@ public class Server {
             FileInputStream fis = new FileInputStream(file);
             BufferedInputStream bis = new BufferedInputStream(fis);
 
-            int theByte = 0;
+            int theByte;
             while((theByte = bis.read()) != -1) bos.write(theByte);
 
             bis.close();

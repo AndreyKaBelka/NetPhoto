@@ -1,9 +1,11 @@
 package com.album;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 
@@ -75,20 +77,25 @@ public class Controller {
     private ProgressBar SessionTime;
 
     @FXML
-    void initialize() throws IOException {
+    private AnchorPane mainmenu;
+
+    @FXML
+    private AnchorPane connectedpane;
+
+    @FXML
+    private AnchorPane servermenu;
+
+    @FXML
+    private AnchorPane keymenu;
+
+    @FXML
+    void initialize() {
         AtomicReference<String> pathdir = new AtomicReference<>(new String( ));
         AtomicReference<Client> client = new AtomicReference<>(new Client( ));
 
         ButtonUser1.setOnAction(actionEvent -> {
-            ButtonUser1.setVisible(false);
-            ButtonUser2.setVisible(false);
-            Name.setVisible(false);
-            TextGeneratedKey.setVisible(true);
-            TextPath.setVisible(true);
-            TextTemp.setVisible(true);
-            ButtonStart.setVisible(true);
-            ButtonBrowse.setVisible(true);
-            SessionTime.setVisible(true);
+            mainmenu.setVisible(false);
+            servermenu.setVisible(true);
         });
 
         ButtonBrowse.setOnAction(actionEvent -> {
@@ -117,40 +124,30 @@ public class Controller {
                 ImageBan.setVisible(true);
             }}).start();
             new Thread(() -> {
+                SessionTime.setVisible(true);
                 while(true) {
                     Date date = new Date();
                     timeNow = (double) date.getTime( )%100000/100000;
                     SessionTime.setProgress(timeNow);
-                    System.out.println(timeNow);
                     if (timeNow == 0) TextGeneratedKey.setText(Crypt.encrypt("00"));
                 }
                 }).start();
         });
 
         ButtonUser2.setOnAction(actionEvent -> {
-            ButtonUser1.setVisible(false);
-            ButtonUser2.setVisible(false);
-            Name.setVisible(false);
-            TextKey.setVisible(true);
-            ButtonConnect.setVisible(true);
+            mainmenu.setVisible(false);
+            keymenu.setVisible(true);
         });
 
         ButtonConnect.setOnAction(actionEvent -> {
-            TextKey.setVisible(false);
-            ButtonConnect.setVisible(false);
             ImageLoading.setVisible(true);
             try {
                 client.get().connect(Crypt.decrypt(TextKey.getText( )));
-                TextPath1.setVisible(true);
-                TextTemp1.setVisible(true);
-                ButtonStart1.setVisible(true);
-                ButtonBrowse1.setVisible(true);
+                connectedpane.setVisible(true);
                 ImageLoading.setVisible(false);
+                keymenu.setVisible(false);
             } catch (StringIndexOutOfBoundsException | IOException | ArrayIndexOutOfBoundsException e) {
                 e.printStackTrace();
-                ImageLoading.setVisible(false);
-                TextKey.setVisible(true);
-                ButtonConnect.setVisible(true);
                 ImageBan1.setVisible(true);
             }
         });

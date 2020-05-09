@@ -13,7 +13,11 @@ public class Client {
     private Socket socket;
 
     public void connect(String IP) throws IOException {
-        socket = new Socket(IP, 8030);
+//        socket = new Socket(IP, 8030);
+//        InetAddress ip = InetAddress.getByName("60aee923.ngrok.io");
+////        socket = new Socket(ip, 80);
+        socket = new Socket("91.105.139.77", 80);
+
     }
 
     public void download(String dir) throws IOException {
@@ -25,17 +29,16 @@ public class Client {
         JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
         jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
         jpegParams.setCompressionQuality(0.9f);
+        ImageIO.setUseCache(false);
         final ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
         BufferedImage capture;
-        ImageIO.setUseCache(false);
-        for(int i = 0; i < filesCount; i++)
-        {
+        for (int i = 0; i < filesCount; i++) {
             long fileLength = dis.readLong();
             String fileName = dis.readUTF();
             byte[] byteArray = new byte[(int) fileLength];
             files[i] = new File(dirPath + "/" + fileName);
             writer.setOutput(new FileImageOutputStream(files[i]));
-            for(int j = 0; j < fileLength; j++) {
+            for (int j = 0; j < fileLength; j++) {
                 byteArray[j] = dis.readByte();
             }
             capture = ImageIO.read(new ByteArrayInputStream(byteArray));
