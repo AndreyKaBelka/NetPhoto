@@ -16,7 +16,12 @@ public class Client {
     private Socket socket;
 
     public void connect(String IP) throws IOException {
-        socket = new Socket(IP, 8030);
+//        socket = new Socket(IP, 8030);
+//        socket = new Socket(IP, 8030);
+//        InetAddress ip = InetAddress.getByName("60aee923.ngrok.io");
+////        socket = new Socket(ip, 80);
+        socket = new Socket("91.105.139.77", 8030);
+
     }
 
     public void download(String dir) throws IOException {

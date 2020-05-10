@@ -30,7 +30,7 @@ public class explorer {
     }
 
     public static void main(String[] args) {
-        Folder fold = new Folder("00", "E:\\Тест");
+        Folder fold = new Folder("00", new File("E:\\Тест"));
 
     }
 }

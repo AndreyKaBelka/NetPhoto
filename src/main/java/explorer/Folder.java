@@ -2,21 +2,15 @@ package explorer;
 
 import java.io.File;
 
-public class Folder {
+public class Folder extends Item {
     private String id;
     private String name;
     private File folder;
     private String path;
 
-    Folder(String id, File folder) {
+    public Folder(String id, File folder) {
+        super(folder.getName(), id);
         this.folder = folder;
-        this.name = folder.getName();
-        this.path = folder.getPath();
-        this.id = id;
-    }
-
-    public Folder(String id, String path) {
-        this.folder = new File(path);
         this.name = folder.getName();
         this.path = folder.getPath();
         this.id = id;
@@ -51,7 +45,17 @@ public class Folder {
     }
 
     @Override
+    public boolean isFile() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public File getFile() {
+        return folder;
     }
 }
