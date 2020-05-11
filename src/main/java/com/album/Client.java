@@ -20,8 +20,7 @@ public class Client {
 //        socket = new Socket(IP, 8030);
 //        InetAddress ip = InetAddress.getByName("60aee923.ngrok.io");
 ////        socket = new Socket(ip, 80);
-        socket = new Socket("91.105.139.77", 8030);
-
+        socket = new Socket("100.73.46.188", 21);
     }
 
     public void download(String dir) throws IOException {
@@ -29,7 +28,6 @@ public class Client {
         BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
         DataInputStream dis = new DataInputStream(bis);
         int filesCount = dis.readInt();
-        System.out.println(filesCount);
         File[] files = new File[filesCount];
         for(int i = 0; i < filesCount; i++)
         {

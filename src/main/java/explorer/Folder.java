@@ -1,5 +1,7 @@
 package explorer;
 
+import com.Consts;
+
 import java.io.File;
 
 public class Folder extends Item {
@@ -9,7 +11,7 @@ public class Folder extends Item {
     private String path;
 
     public Folder(String id, File folder) {
-        super(folder.getName(), id);
+        super(folder.getName(), id, Consts.fold);
         this.folder = folder;
         this.name = folder.getName();
         this.path = folder.getPath();

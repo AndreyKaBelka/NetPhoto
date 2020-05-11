@@ -2,7 +2,7 @@ package explorer;
 
 import java.io.File;
 
-public class explorer {
+public class ExplorerCommands {
     public static boolean createNewFolder(Folder folder, String newName) {
         File dir = new File(folder.getPath() + "\\" + newName);
         File fold = folder.getFolder();
@@ -29,8 +29,10 @@ public class explorer {
         return false;
     }
 
-    public static void main(String[] args) {
-        Folder fold = new Folder("00", new File("E:\\Тест"));
+    public static String getFileExtension(String fileName){
+        int lastIndexOfDot = fileName.lastIndexOf(".");
 
+        if (lastIndexOfDot != -1 && lastIndexOfDot != 0) return fileName.substring(lastIndexOfDot+1);
+        return "";
     }
 }

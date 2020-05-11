@@ -1,16 +1,18 @@
 package com.test;
 
+import explorer.ExplorerCommands;
 import explorer.Folder;
 import explorer.Item;
 import explorer.Photo;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
 import java.io.File;
-import java.util.Arrays;
 
 public class Tests {
     @FXML
@@ -49,17 +51,17 @@ public class Tests {
                 if (f == null) {
                     return FXCollections.emptyObservableList();
                 }
-                System.out.println(f.getName());
                 if (f.isFile()) {
-                    System.out.println("АЭВЭЫЖПЫВП");
                     return FXCollections.emptyObservableList();
                 }
                 File[] files = f.listFiles();
-                System.out.println(Arrays.toString(files));
                 if (files != null) {
                     ObservableList<TreeItem<Item>> children = FXCollections.observableArrayList();
                     for (File childFile : files) {
-                        children.add(createNodes(childFile));
+                        String fileEx = ExplorerCommands.getFileExtension(f.getName());
+                        if (fileEx.equals("jpeg") || fileEx.equals("")) {
+                            children.add(createNodes(childFile));
+                        }
                     }
                     return children;
                 }
@@ -68,10 +70,55 @@ public class Tests {
         };
     }
 
+    private ContextMenu createContexMenu() {
+        ContextMenu cm = new ContextMenu();
+        MenuItem openFile = new MenuItem("Открыть");
+        openFile.setOnAction(event -> {
+            if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
+                if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
+                    System.out.println("ФОткрываю фотку!");
+                } else {
+                    System.out.println("ПАПКА!");
+                }
+            } else {
+                System.out.println("НАЕБАЛОВО КАКОЕТО!");
+            }
+        });
+        cm.getItems().add(openFile);
+        MenuItem deleteFile = new MenuItem("Удалить");
+        deleteFile.setOnAction(event -> {
+            if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
+                if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
+                    System.out.println("Удаляю фотку!");
+                } else {
+                    System.out.println("Удаляю папку!!");
+                }
+            } else {
+                System.out.println("НАЕБАЛОВО КАКОЕТО!");
+            }
+        });
+        cm.getItems().add(deleteFile);
+        MenuItem renameFIle = new MenuItem("Переименовать");
+        renameFIle.setOnAction(event -> {
+            if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
+                if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
+                    System.out.println("Переименовать фотку!");
+                } else {
+                    System.out.println("Переименовать папку!!");
+                }
+            } else {
+                System.out.println("НАЕБАЛОВО КАКОЕТО!");
+            }
+        });
+        cm.getItems().add(renameFIle);
+        return cm;
+    }
+
     @FXML
     void initialize() {
         TreeItem<Item> root = createNodes(new File("E:\\Тест"));
         treeExplorer.setRoot(root);
+        treeExplorer.setContextMenu(createContexMenu());
     }
 
 }
