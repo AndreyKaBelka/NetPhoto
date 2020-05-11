@@ -29,10 +29,10 @@ public class ExplorerCommands {
         return false;
     }
 
-    public static String getFileExtension(String fileName){
+    public static String getFileExtension(String fileName) {
         int lastIndexOfDot = fileName.lastIndexOf(".");
 
-        if (lastIndexOfDot != -1 && lastIndexOfDot != 0) return fileName.substring(lastIndexOfDot+1);
+        if (lastIndexOfDot != -1 && lastIndexOfDot != 0) return fileName.substring(lastIndexOfDot + 1);
         return "";
     }
 }

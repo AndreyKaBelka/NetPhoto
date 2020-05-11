@@ -58,10 +58,9 @@ public class Tests {
                 if (files != null) {
                     ObservableList<TreeItem<Item>> children = FXCollections.observableArrayList();
                     for (File childFile : files) {
-                        String fileEx = ExplorerCommands.getFileExtension(f.getName());
-                        if (fileEx.equals("jpeg") || fileEx.equals("")) {
+                        String fileEx = ExplorerCommands.getFileExtension(childFile.getName());
+                        if (fileEx.equals("jpeg") || fileEx.equals(""))
                             children.add(createNodes(childFile));
-                        }
                     }
                     return children;
                 }
