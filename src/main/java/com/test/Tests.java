@@ -1,5 +1,6 @@
 package com.test;
 
+import com.Consts;
 import explorer.ExplorerCommands;
 import explorer.Folder;
 import explorer.Item;
@@ -7,10 +8,9 @@ import explorer.Photo;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.util.Callback;
 
 import java.io.File;
 
@@ -29,6 +29,7 @@ public class Tests {
                 if (isFirstTimeChildren) {
                     isFirstTimeChildren = false;
                     ObservableList<TreeItem<Item>> child = buildChildren(this);
+                    System.out.println(this.getValue().getName());
                     if (child.size() != 0) {
                         super.getChildren().setAll(child);
                     }
@@ -40,7 +41,7 @@ public class Tests {
             public boolean isLeaf() {
                 if (isFirstTimeLeaf) {
                     isFirstTimeLeaf = false;
-                    Item f = getValue();
+                    File f = getValue().getFile();
                     isLeaf = f.isFile();
                 }
                 return isLeaf;
@@ -52,10 +53,13 @@ public class Tests {
                     return FXCollections.emptyObservableList();
                 }
                 if (f.isFile()) {
+                    TreeItem.setGraphic(new ImageView(Consts.img));
+                    System.out.println(TreeItem.getGraphic().toString());
                     return FXCollections.emptyObservableList();
                 }
                 File[] files = f.listFiles();
                 if (files != null) {
+                    TreeItem.setGraphic(new ImageView(Consts.fold));
                     ObservableList<TreeItem<Item>> children = FXCollections.observableArrayList();
                     for (File childFile : files) {
                         String fileEx = ExplorerCommands.getFileExtension(childFile.getName());
