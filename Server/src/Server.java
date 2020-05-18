@@ -14,10 +14,12 @@ public class Server {
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            IP = serverSocket.getInetAddress().getHostAddress();
             Console.writeMessage("Сервер запущен...");
+            Console.writeMessage(getIP());
             for (; ; ) {
                 Socket socket = serverSocket.accept();
-                new ClientHandler(socket);
+                new ClientHandler(socket).start();
             }
 
         } catch (IOException e) {
@@ -47,6 +49,7 @@ public class Server {
                         tokens.put(token, message.getUserId());
                         try {
                             connectionArray.put(message.getUserId(), connection);
+                            connection.sendMessage(new Message(MessageType.CONNECTED));
                             return message.getUserId();
                         } catch (IOException e) {
                             Console.writeMessage(e.toString());
@@ -61,6 +64,7 @@ public class Server {
                     if (token != null && !token.isEmpty() && tokens.containsKey(token)) {
                         pairs.put(tokens.get(token), message.getUserId());
                         tokens.put(token, message.getUserId());
+                        connection.sendMessage(new Message(MessageType.CONNECTED));
                         return message.getUserId();
                     } else {
                         connection.close();
@@ -92,6 +96,7 @@ public class Server {
         @Override
         public void run() {
             try (Connection connection = new Connection(socket)) {
+                Console.writeMessage("Новый пользователь: " + connection.getRemoteSocketAddress().toString());
                 int userID = onConnection(connection);
                 serverLoopForUsers(connection, userID);
             } catch (Exception e) {

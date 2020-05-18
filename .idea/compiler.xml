@@ -6,12 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="NetPhoto" />
+        <module name="Connection" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="13">
       <module name="Client" target="13" />
-      <module name="Connection" target="13" />
       <module name="Server" target="13" />
     </bytecodeTargetLevel>
   </component>

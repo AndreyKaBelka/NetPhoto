@@ -8,10 +8,6 @@
     <artifactId>NetPhoto</artifactId>
     <packaging>pom</packaging>
     <version>0.0.1</version>
-    <modules>
-        <module>Connection</module>
-        <module>Client</module>
-    </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>11</maven.compiler.release>

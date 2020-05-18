@@ -97,4 +97,9 @@ public class Message implements Serializable {
     public Folder getFolder() {
         return folder;
     }
+
+    @Override
+    public String toString() {
+        return text;
+    }
 }

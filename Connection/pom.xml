@@ -10,6 +10,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>Connection</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>com.album</groupId>
+            <artifactId>NetPhoto</artifactId>
+            <version>0.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 
 </project>

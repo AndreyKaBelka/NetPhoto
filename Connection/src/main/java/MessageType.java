@@ -5,5 +5,6 @@ public enum MessageType {
     TEXT,
     TOKEN,
     NUMBER_USER_REQUEST,
-    FOLDER
+    FOLDER,
+    CONNECTED
 }
