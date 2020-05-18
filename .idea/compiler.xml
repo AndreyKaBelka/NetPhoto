@@ -9,6 +9,10 @@
         <module name="NetPhoto" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="13" />
+    <bytecodeTargetLevel target="13">
+      <module name="Client" target="13" />
+      <module name="Connection" target="13" />
+      <module name="Server" target="13" />
+    </bytecodeTargetLevel>
   </component>
 </project>

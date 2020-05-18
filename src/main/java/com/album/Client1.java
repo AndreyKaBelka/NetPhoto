@@ -1,33 +1,28 @@
 package com.album;
 
+import com.files.Photo;
+
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.stream.FileImageOutputStream;
-import javax.imageio.stream.IIOByteBuffer;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.ByteOrder;
+import java.util.ArrayList;
 
 public class Client1 {
 
-    public void server_start(String dir) throws IOException {
-        String directory = dir;
-        ServerSocket server = new ServerSocket(21);
-        File[] files = new File(directory).listFiles();
-        Socket socket;
-        socket = server.accept();
-        BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+    public ArrayList<Photo> getCompressedFiles(String dir) throws IOException {
+        ArrayList<Photo> photos = new ArrayList<>();
+
+        File[] files = new File(dir).listFiles();
         ByteArrayOutputStream bStream;
-        DataOutputStream dos = new DataOutputStream(bos);
-        dos.writeInt(files.length);
+
         for(File file : files)
         {
+            Photo photo = new Photo();
             bStream = new ByteArrayOutputStream();
             ImageOutputStream sos = new MemoryCacheImageOutputStream(bStream);
             ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
@@ -40,43 +35,14 @@ public class Client1 {
             BufferedImage capture = ImageIO.read(file);
             IIOImage outputImage = new IIOImage(capture, null, null);
             jpgWriter.write(null, outputImage, jpgWriteParam);
-            dos.writeLong(bStream.size());
+            photo.setSize(bStream.size());
             String name = file.getName();
-            dos.writeUTF(name);
-            bos.write(bStream.toByteArray());
+            photo.setName(name);
+            photo.setByteArray(bStream.toByteArray());
             sos.flush();
             bis.close();
         }
-        bos.close();
-        dos.close();
-    }
 
-    public void server_start_temp(String dir) throws IOException {
-        String directory = dir;
-        ServerSocket server = new ServerSocket(21);
-        File[] files = new File(directory).listFiles();
-        Socket socket;
-        socket = server.accept();
-        BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
-        DataOutputStream dos = new DataOutputStream(bos);
-        dos.writeInt(files.length);
-        BufferedImage bImage = null;
-        for(File file : files)
-        {
-            long length = file.length();
-            dos.writeLong(length);
-            String name = file.getName();
-            dos.writeUTF(name);
-            bImage = ImageIO.read(file);
-            FileInputStream fis = new FileInputStream(file);
-            BufferedInputStream bis = new BufferedInputStream(fis);
-            int theByte = 0;
-            /*while((theByte = bis.read()) != -1) {
-                //bos.write(theByte);
-            }*/
-            ImageIO.write(bImage,"jpg",bos);
-            bis.close();
-        }
-        dos.close();
+        return photos;
     }
 }
