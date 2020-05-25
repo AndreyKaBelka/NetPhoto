@@ -1,18 +1,25 @@
 package com.files;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class Photo implements Serializable {
     private String name;
     private long size;
     private byte[] byteArray;
-    private final int id;
+    private final String id;
 
     public Photo() {
-        id = hashCode();
+        id = UUID.randomUUID().toString();
     }
 
-    public int getId() {
+    public Photo(String name, long size) {
+        id = UUID.randomUUID().toString();
+        this.name = name;
+        this.size = size;
+    }
+
+    public String getId() {
         return id;
     }
 
@@ -42,6 +49,6 @@ public class Photo implements Serializable {
 
     @Override
     public String toString() {
-        return "Name: " + name + "\nSize: " + size + "\n";
+        return "Name: " + name + " Size: " + size + " ID: " + id;
     }
 }

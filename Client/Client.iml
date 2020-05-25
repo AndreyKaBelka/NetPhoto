@@ -8,6 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Connection" exported="" />
-    <orderEntry type="module" module-name="NetPhoto" />
+    <orderEntry type="module" module-name="NetPhoto" exported="" />
   </component>
 </module>

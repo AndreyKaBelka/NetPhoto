@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class Client1 {
 
-    public ArrayList<Photo> getCompressedFiles(String dir) throws IOException {
+    public static ArrayList<Photo> getCompressedFiles(String dir) throws IOException {
         ArrayList<Photo> photos = new ArrayList<>();
 
         File[] files = new File(dir).listFiles();
@@ -39,6 +39,7 @@ public class Client1 {
             String name = file.getName();
             photo.setName(name);
             photo.setByteArray(bStream.toByteArray());
+            photos.add(photo);
             sos.flush();
             bis.close();
         }

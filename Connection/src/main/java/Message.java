@@ -4,45 +4,52 @@ import com.files.Photo;
 import java.io.IOException;
 import java.io.Serializable;
 
+/**
+ * Данный класс предназначен для получения и отправки пользователями сообщений(фото, папок)
+ */
 public class Message implements Serializable {
-    private MessageType msgType;
-    private final String text;
-    private final Photo photo;
-    private final Folder folder;
-    private final int userId;
+    private final MessageType msgType;//тип передаваемого сообщения
+    private final String text;//текст сообщения
+    private final Photo photo;//фото сообщения
+    private final Folder folder;//папка
+    private final long userId;//id пользователя отправившего сообщение
+    private final String tokenOfSession;//токен сессии, в которой происходит обмен сообщениями
 
 
-    public Message(MessageType msgType, String text, int userId) {
+    public Message(MessageType msgType, String text, long userId, String tokenOfSession) {
         this.msgType = msgType;
         this.text = text;
         this.photo = null;
         this.userId = userId;
         this.folder = null;
+        this.tokenOfSession = tokenOfSession;
     }
 
-    public Message(MessageType msgType, Photo photo, int userId) {
+    public Message(MessageType msgType, Photo photo, long userId, String tokenOfSession) {
         this.msgType = msgType;
         this.photo = photo;
         this.text = null;
         this.userId = userId;
         this.folder = null;
+        this.tokenOfSession = tokenOfSession;
     }
 
-    public Message(MessageType msgType, Folder folder, int userId) {
+    public Message(MessageType msgType, Folder folder, long userId, String tokenOfSession) {
         this.msgType = msgType;
         this.photo = null;
         this.text = null;
         this.userId = userId;
         this.folder = folder;
+        this.tokenOfSession = tokenOfSession;
     }
 
-    public Message(MessageType msgType, int userId) {
+    public Message(MessageType msgType, long userId) {
         this.msgType = msgType;
         this.photo = null;
         this.text = null;
         this.userId = userId;
         this.folder = null;
-
+        this.tokenOfSession = null;
     }
 
     public Message(MessageType msgType, String text) {
@@ -51,6 +58,8 @@ public class Message implements Serializable {
         this.photo = null;
         this.userId = -1;
         this.folder = null;
+        this.tokenOfSession = null;
+
     }
 
     public Message(MessageType msgType, Photo photo) {
@@ -59,6 +68,8 @@ public class Message implements Serializable {
         this.text = null;
         this.userId = -1;
         this.folder = null;
+        this.tokenOfSession = null;
+
     }
 
     public Message(MessageType msgType, Folder folder) {
@@ -67,6 +78,8 @@ public class Message implements Serializable {
         this.text = null;
         this.userId = -1;
         this.folder = folder;
+        this.tokenOfSession = null;
+
     }
 
     public Message(MessageType msgType) {
@@ -75,6 +88,7 @@ public class Message implements Serializable {
         this.text = null;
         this.userId = -1;
         this.folder = null;
+        this.tokenOfSession = null;
     }
 
     public MessageType getMsgType() {
@@ -89,9 +103,13 @@ public class Message implements Serializable {
         return text;
     }
 
-    public int getUserId() throws IOException {
+    public long getUserId() throws IOException {
         if (userId == -1) throw new IOException("Неверный id пользователя");
         return userId;
+    }
+
+    public String getTokenOfSession() {
+        return tokenOfSession;
     }
 
     public Folder getFolder() {
