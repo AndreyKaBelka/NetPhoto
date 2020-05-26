@@ -9,10 +9,9 @@
         <module name="Connection" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="13">
-      <module name="Client" target="13" />
-      <module name="Connection" target="13" />
-      <module name="Server" target="13" />
+    <bytecodeTargetLevel target="11">
+      <module name="Client" target="11" />
+      <module name="Server" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
