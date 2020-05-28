@@ -6,8 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 public class FXapp extends Application {
 
     public static void main(String[] args) {
@@ -15,11 +13,16 @@ public class FXapp extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/sample.fxml"));//TODO: Никита если ты это увидишь, то пофикси это гавно, он не видит файл
-        primaryStage.setTitle("NetPhoto");
-        primaryStage.setScene(new Scene(root, 600, 400));
-        primaryStage.show();
+    public void start(Stage primaryStage) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/sample.fxml"));
+            Parent root = fxmlLoader.load();
+            primaryStage.setTitle("NetPhoto");
+            primaryStage.setScene(new Scene(root, 600, 400));
+            primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

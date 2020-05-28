@@ -5,6 +5,4 @@ module NetPhoto {
 
     opens com.album to javafx.fxml;
     exports com.album;
-    opens com.test to javafx.fxml;
-    exports com.test;
 }

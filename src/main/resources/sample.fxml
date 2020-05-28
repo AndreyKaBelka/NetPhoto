@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.Bloom?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.album.Controller">
+    <ImageView fitHeight="400.0" fitWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+               AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Image url="@img/FON.jpg"/>
+    </ImageView>
+    <AnchorPane fx:id="servermenu" prefHeight="400.0" prefWidth="600.0">
+        <Button fx:id="ButtonBrowse" layoutX="254.0" layoutY="325.0" mnemonicParsing="false" prefHeight="34.0"
+                prefWidth="68.0" text="Обзор" textAlignment="CENTER">
+            <font>
+                <Font name="Calibri" size="14.0"/>
+            </font>
+        </Button>
+        <TextArea fx:id="TextPath" layoutX="27.0" layoutY="323.0" prefHeight="34.0" prefWidth="212.0"/>
+        <ImageView fx:id="ImageOk" fitHeight="34.0" fitWidth="35.0" layoutX="27.0" layoutY="289.0" visible="false">
+            <Image url="@img/ok.png"/>
+        </ImageView>
+        <ImageView fx:id="ImageBan" fitHeight="36.0" fitWidth="35.0" layoutX="27.0" layoutY="288.0" visible="false">
+            <Image url="@img/ban.png"/>
+        </ImageView>
+    </AnchorPane>
+    <AnchorPane fx:id="mainmenu" prefHeight="400.0" prefWidth="600.0" visible="false">
+        <Button fx:id="ButtonUser2" layoutX="347.0" layoutY="200.0" mnemonicParsing="false" opacity="0.47"
+                prefHeight="69.0" prefWidth="157.0" style="-fx-background-color: #42aaff;" text="Пользователь 2"
+                textAlignment="CENTER" textFill="WHITE">
+            <font>
+                <Font name="Verdana" size="16.0"/>
+            </font>
+        </Button>
+        <Pane fx:id="Name" opacity="0.47" prefHeight="107.0" prefWidth="600.0" style="-fx-background-color: #42aaff;"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <effect>
+                <Bloom threshold="0.99"/>
+            </effect>
+            <Text fill="WHITE" layoutX="156.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0"
+                  text="Сетевой фотоальбом">
+                <font>
+                    <Font name="Arial Black" size="24.0"/>
+                </font>
+            </Text>
+        </Pane>
+        <Button fx:id="ButtonUser1" layoutX="93.0" layoutY="200.0" mnemonicParsing="false" opacity="0.47"
+                prefHeight="69.0" prefWidth="157.0" style="-fx-background-color: #42aaff;" text="Пользователь 1"
+                textAlignment="CENTER" textFill="WHITE">
+            <font>
+                <Font name="Verdana" size="16.0"/>
+            </font>
+        </Button>
+    </AnchorPane>
+    <AnchorPane fx:id="connectedpane" prefHeight="400.0" prefWidth="600.0" visible="false">
+        <TextArea fx:id="TextPath1" layoutX="134.0" layoutY="270.0" prefHeight="34.0" prefWidth="212.0"/>
+        <Button fx:id="ButtonBrowse1" layoutX="52.0" layoutY="272.0" mnemonicParsing="false" prefHeight="34.0"
+                prefWidth="68.0" text="Обзор" textAlignment="CENTER">
+            <font>
+                <Font name="Calibri" size="14.0"/>
+            </font>
+        </Button>
+        <Button fx:id="ButtonStart1" layoutX="16.0" layoutY="334.0" mnemonicParsing="false" text="Загрузить">
+            <font>
+                <Font name="Calibri" size="19.0"/>
+            </font>
+        </Button>
+        <ImageView fx:id="ImageLoading" fitHeight="112.0" fitWidth="200.0" layoutX="200.0" layoutY="278.0"
+                   visible="false">
+            <Image url="@img/loading.gif"/>
+        </ImageView>
+    </AnchorPane>
+    <AnchorPane fx:id="keymenu" prefHeight="400.0" prefWidth="600.0" visible="false">
+        <TextArea fx:id="TextKey" layoutX="106.0" layoutY="169.0" prefHeight="34.0" prefWidth="389.0"
+                  promptText="Введите ключ сессии">
+            <font>
+                <Font name="Arial" size="21.0"/>
+            </font>
+        </TextArea>
+        <Button fx:id="ButtonConnect" layoutX="222.0" layoutY="258.0" mnemonicParsing="false" opacity="0.47"
+                prefHeight="69.0" prefWidth="157.0" style="-fx-background-color: #42aaff;" text="Подключиться"
+                textAlignment="CENTER" textFill="WHITE">
+            <font>
+                <Font name="Verdana" size="16.0"/>
+            </font>
+        </Button>
+        <ImageView fx:id="ImageBan1" fitHeight="36.0" fitWidth="35.0" layoutX="283.0" layoutY="343.0" visible="false">
+            <Image url="@img/ban.png"/>
+        </ImageView>
+    </AnchorPane>
+    <TreeView fx:id="treeExplorer" layoutX="91.0" layoutY="22.0" prefHeight="225.0" prefWidth="418.0" visible="false"/>
+</AnchorPane>
