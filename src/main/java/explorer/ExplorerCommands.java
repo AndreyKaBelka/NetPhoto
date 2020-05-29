@@ -1,20 +1,24 @@
 package explorer;
 
 import java.io.File;
+import java.util.UUID;
 
 public class ExplorerCommands {
     public static boolean createNewFolder(Folder folder, String newName) {
         File dir = new File(folder.getPath() + "\\" + newName);
-        File fold = folder.getFolder();
-        if (fold.exists() && fold.isDirectory()) {
-            return dir.mkdir();
-        }
-        return false;
+        return dir.mkdir();
     }
 
     public static boolean deleteFolder(Folder folder) {
         File dir = folder.getFolder();
-        if (dir.exists() && dir.isDirectory()) {
+        if (dir.exists()) {
+            for (File file : dir.listFiles()) {
+                if (file.isFile()) {
+                    deletePhoto(new Photo(UUID.randomUUID().toString(), file));
+                } else {
+                    deleteFolder(new Folder(UUID.randomUUID().toString(), file));
+                }
+            }
             return dir.delete();
         }
         return false;
@@ -23,8 +27,26 @@ public class ExplorerCommands {
     public static boolean renameFolder(Folder folder, String newName) {
         File dir = folder.getFolder();
         File newDir = new File(dir.getParent() + "\\" + newName);
-        if (dir.exists() && dir.isDirectory()) {
+        if (dir.exists()) {
             return dir.renameTo(newDir);
+        }
+        return false;
+    }
+
+    public static boolean deletePhoto(Photo photo) {
+        File photoFile = photo.getFile();
+        if (photoFile.exists()) {
+            return photoFile.delete();
+        }
+        return false;
+    }
+
+
+    public static boolean renamePhoto(Photo photo, String newName) {
+        File photoFile = photo.getFile();
+        File newNameFile = new File(photoFile.getParent() + "\\" + newName);
+        if (photoFile.exists()) {
+            return photoFile.renameTo(newNameFile);
         }
         return false;
     }

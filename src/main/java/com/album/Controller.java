@@ -14,6 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -80,7 +81,7 @@ public class Controller {
     private TreeView<Item> treeExplorer;
 
     private TreeItem<Item> createNodes(File f) {
-        return new TreeItem<>((f.isFile()) ? new Photo("00", f) : new Folder("00", f)) {
+        return new TreeItem<>((f.isFile()) ? new Photo(UUID.randomUUID().toString(), f) : new Folder(UUID.randomUUID().toString(), f)) {
             private boolean isLeaf;
             private boolean isFirstTimeChildren = true;
             private boolean isFirstTimeLeaf = true;
@@ -138,10 +139,10 @@ public class Controller {
                 if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
                     System.out.println("ФОткрываю фотку!");
                 } else {
-                    System.out.println("ПАПКА!");
+                    treeExplorer.getSelectionModel().getSelectedItem().setExpanded(true);
                 }
             } else {
-                System.out.println("НАЕБАЛОВО КАКОЕТО!");
+                System.out.println("Извините, допущена ошибка...");
             }
         });
         cm.getItems().add(openFile);
@@ -149,12 +150,20 @@ public class Controller {
         deleteFile.setOnAction(event -> {
             if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
                 if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
-                    System.out.println("Удаляю фотку!");
+                    if (ExplorerCommands.deletePhoto(treeExplorer.getSelectionModel().getSelectedItem().getValue().getParentPhoto())) {
+                        treeExplorer.getSelectionModel().getSelectedItem().getParent().getChildren().remove(treeExplorer.getSelectionModel().getSelectedItem());
+                    } else {
+                        System.out.println("Ошибка при удалении!");
+                    }
                 } else {
-                    System.out.println("Удаляю папку!!");
+                    if (ExplorerCommands.deleteFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getParentFolder())) {
+                        treeExplorer.getSelectionModel().getSelectedItem().getParent().getChildren().remove(treeExplorer.getSelectionModel().getSelectedItem());
+                    } else {
+                        System.out.println("Ошибка при удалении!");
+                    }
                 }
             } else {
-                System.out.println("НАЕБАЛОВО КАКОЕТО!");
+                System.out.println("Извините, допущена ошибка...");
             }
         });
         cm.getItems().add(deleteFile);
@@ -167,14 +176,13 @@ public class Controller {
                     System.out.println("Переименовать папку!!");
                 }
             } else {
-                System.out.println("НАЕБАЛОВО КАКОЕТО!");
+                System.out.println("Извините, допущена ошибка...");
             }
         });
         cm.getItems().add(renameFIle);
         MenuItem shareFolder = new MenuItem("Отправить папку");
         shareFolder.setOnAction(event -> {
             if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
-                System.out.println("Здесь !!!!");
                 if (!treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
                     boolean canShareFolder = true;
                     File[] folder = treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().listFiles();
@@ -190,7 +198,7 @@ public class Controller {
                         }
                     }
                     if (canShareFolder) {
-                        System.out.println("Можно передать");
+                        System.out.println("Можно передать");//TODO: Ошбика при передачи папки
                     } else {
                         System.out.println("Нельзя передать");
                     }
@@ -212,6 +220,9 @@ public class Controller {
 
         mainmenu.setVisible(true);
         treeExplorer.setVisible(false);
+        keymenu.setVisible(false);
+        servermenu.setVisible(false);
+        connectedpane.setVisible(false);
 
         ButtonUser1.setOnAction(actionEvent -> {
             mainmenu.setVisible(false);

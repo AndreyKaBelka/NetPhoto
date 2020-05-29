@@ -1,4 +1,4 @@
-/target/
-/out/
-/.idea/
-/Connection/target/
+target/
+out/
+.idea/
+Connection/target/
