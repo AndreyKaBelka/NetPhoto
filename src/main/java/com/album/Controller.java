@@ -169,19 +169,18 @@ public class Controller {
             }
         });
         cm.getItems().add(deleteFile);
-        MenuItem renameFIle = new MenuItem("Переименовать");
-        renameFIle.setOnAction(event -> {
-            if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
-                if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
-                    System.out.println("Переименовать фотку!");
+        MenuItem createNewFolder = new MenuItem("Создать папку в выбранной");
+        createNewFolder.setOnAction(actionEvent -> {
+            if (!treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
+                File file = ExplorerCommands.createNewFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getParentFolder());
+                if (file != null) {
+                    treeExplorer.getSelectionModel().getSelectedItem().getChildren().add(createNodes(file));
                 } else {
-                    System.out.println("Переименовать папку!!");
+                    System.out.println("Извините, произошла ошибка...");
                 }
-            } else {
-                System.out.println("Извините, допущена ошибка...");
             }
         });
-        cm.getItems().add(renameFIle);
+        cm.getItems().add(createNewFolder);
         MenuItem shareFolder = new MenuItem("Отправить папку");
         shareFolder.setOnAction(event -> {
             if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {

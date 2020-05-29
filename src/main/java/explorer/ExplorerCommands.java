@@ -4,9 +4,23 @@ import java.io.File;
 import java.util.UUID;
 
 public class ExplorerCommands {
-    public static boolean createNewFolder(Folder folder, String newName) {
+    public static File createNewFolder(Folder folder) {
+        String newName = "Новая папка";
+        int cnt = 1;
+        while (true) {
+            if (new File(folder.getPath() + "\\" + newName).exists()) {
+                newName = "Новая папка";
+                newName += " (" + cnt + ")";
+                cnt++;
+            } else {
+                break;
+            }
+        }
         File dir = new File(folder.getPath() + "\\" + newName);
-        return dir.mkdir();
+        if (dir.mkdir()) {
+            return dir;
+        }
+        return null;
     }
 
     public static boolean deleteFolder(Folder folder) {
