@@ -1,4 +1,4 @@
-package com.test;
+package com.album;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -6,7 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class mainTestExplorer extends Application {
+public class FXapp extends Application {
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -14,14 +15,13 @@ public class mainTestExplorer extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            FXMLLoader fxmlLoader = FXMLLoader.load(getClass().getResource("tests.fxml"));
-            Parent root = fxmlLoader.getRoot();
-            primaryStage.setTitle("TEST!!!");
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/sample.fxml"));
+            Parent root = fxmlLoader.load();
+            primaryStage.setTitle("NetPhoto");
             primaryStage.setScene(new Scene(root, 600, 400));
             primaryStage.show();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            stop();
         }
     }
 
@@ -29,5 +29,4 @@ public class mainTestExplorer extends Application {
     public void stop() {
         System.exit(0);
     }
-
 }

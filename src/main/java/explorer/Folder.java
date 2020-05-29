@@ -60,4 +60,14 @@ public class Folder extends Item {
     public File getFile() {
         return folder;
     }
+
+    @Override
+    public Folder getParentFolder() {
+        return this;
+    }
+
+    @Override
+    public Photo getParentPhoto() {
+        return null;
+    }
 }

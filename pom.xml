@@ -45,24 +45,9 @@
                     <jlinkImageName>FXapp</jlinkImageName>
                     <launcher>launcher</launcher>
                     <mainClass>com.album.FXapp</mainClass>
-                    <mainClass>com.test.mainTestExplorer</mainClass>
                 </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>${basedir}</directory>
-                <includes>
-                    <include>${project.basedir}/src/main/resources</include>
-                    <include>**/*.**</include>
-                </includes>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>${project.basedir}/src/main/resources</directory>
-            </testResource>
-        </testResources>
     </build>
 
 </project>

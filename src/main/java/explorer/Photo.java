@@ -50,4 +50,16 @@ public class Photo extends Item {
     public File getFile() {
         return photo;
     }
+
+    @Override
+    public Folder getParentFolder() {
+        return null;
+    }
+
+    @Override
+    public Photo getParentPhoto() {
+        return this;
+    }
+
+
 }

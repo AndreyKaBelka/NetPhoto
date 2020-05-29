@@ -42,4 +42,8 @@ public abstract class Item {
     public void setImg(Image img) {
         this.img = img;
     }
+
+    public abstract Folder getParentFolder();
+
+    public abstract Photo getParentPhoto();
 }
