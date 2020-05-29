@@ -8,10 +8,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
+import javafx.util.StringConverter;
 
 import java.io.File;
 import java.util.UUID;
@@ -217,6 +219,36 @@ public class Controller {
         TreeItem<Item> root = createNodes(new File("E:\\Тест"));
         treeExplorer.setRoot(root);
         treeExplorer.setContextMenu(createContexMenu());
+        treeExplorer.setEditable(true);
+        treeExplorer.setCellFactory(itemTreeView -> new TextFieldTreeCell<>(new StringConverter<>() {
+
+            @Override
+            public String toString(Item object) {
+                return object.getName();
+            }
+
+            @Override
+            public Item fromString(String s) {
+                if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
+                    File newFile = ExplorerCommands.renamePhoto(treeExplorer.getSelectionModel().getSelectedItem().getValue().getParentPhoto(), s);
+                    if (newFile != null) {
+                        Photo photo = new Photo(UUID.randomUUID().toString(), newFile);
+                        photo.setName(s);
+                        System.out.println(s);
+                        return photo;
+                    }
+                } else {
+                    File newFile = ExplorerCommands.renameFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getParentFolder(), s);
+                    if (newFile != null) {
+                        Folder folder = new Folder(UUID.randomUUID().toString(), newFile);
+                        folder.renameTo(s);
+                        System.out.println(s);
+                        return folder;
+                    }
+                }
+                return treeExplorer.getSelectionModel().getSelectedItem().getValue();
+            }
+        }));
 
         mainmenu.setVisible(true);
         treeExplorer.setVisible(false);
@@ -224,13 +256,17 @@ public class Controller {
         servermenu.setVisible(false);
         connectedpane.setVisible(false);
 
-        ButtonUser1.setOnAction(actionEvent -> {
+        ButtonUser1.setOnAction(actionEvent ->
+
+        {
             mainmenu.setVisible(false);
             servermenu.setVisible(true);
             treeExplorer.setVisible(true);
         });
 
-        ButtonBrowse.setOnAction(actionEvent -> {
+        ButtonBrowse.setOnAction(actionEvent ->
+
+        {
             final DirectoryChooser dirChooser = new DirectoryChooser();
             File dir = dirChooser.showDialog(null);
             if (dir != null) {
@@ -241,12 +277,16 @@ public class Controller {
             }
         });
 
-        ButtonUser2.setOnAction(actionEvent -> {
+        ButtonUser2.setOnAction(actionEvent ->
+
+        {
             mainmenu.setVisible(false);
             keymenu.setVisible(true);
         });
 
-        ButtonConnect.setOnAction(actionEvent -> {
+        ButtonConnect.setOnAction(actionEvent ->
+
+        {
             ImageLoading.setVisible(true);
             try {
                 treeExplorer.setVisible(true);
@@ -259,7 +299,9 @@ public class Controller {
             }
         });
 
-        ButtonBrowse1.setOnAction(actionEvent -> {
+        ButtonBrowse1.setOnAction(actionEvent ->
+
+        {
             final DirectoryChooser dirChooser = new DirectoryChooser();
             File dir = dirChooser.showDialog(null);
             if (dir != null) {
@@ -270,10 +312,16 @@ public class Controller {
             }
         });
 
-        ButtonStart1.setOnAction(actionEvent -> new Thread(() -> {
+        ButtonStart1.setOnAction(actionEvent -> new
+
+                Thread(() ->
+
+        {
             ImageLoading.setVisible(true);
             ImageOk.setVisible(true);
             ImageLoading.setVisible(false);
-        }).start());
+        }).
+
+                start());
     }
 }

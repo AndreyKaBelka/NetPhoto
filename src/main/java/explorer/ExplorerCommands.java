@@ -24,13 +24,15 @@ public class ExplorerCommands {
         return false;
     }
 
-    public static boolean renameFolder(Folder folder, String newName) {
+    public static File renameFolder(Folder folder, String newName) {
         File dir = folder.getFolder();
         File newDir = new File(dir.getParent() + "\\" + newName);
         if (dir.exists()) {
-            return dir.renameTo(newDir);
+            if (dir.renameTo(newDir)) {
+                return newDir;
+            }
         }
-        return false;
+        return null;
     }
 
     public static boolean deletePhoto(Photo photo) {
@@ -42,13 +44,14 @@ public class ExplorerCommands {
     }
 
 
-    public static boolean renamePhoto(Photo photo, String newName) {
+    public static File renamePhoto(Photo photo, String newName) {
         File photoFile = photo.getFile();
         File newNameFile = new File(photoFile.getParent() + "\\" + newName);
         if (photoFile.exists()) {
-            return photoFile.renameTo(newNameFile);
+            if (photoFile.renameTo(newNameFile))
+                return newNameFile;
         }
-        return false;
+        return null;
     }
 
     public static String getFileExtension(String fileName) {
