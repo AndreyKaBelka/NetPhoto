@@ -1,5 +1,7 @@
 package com.album;
 
+import com.ImgViewer;
+import com.client.Client;
 import explorer.ExplorerCommands;
 import explorer.Folder;
 import explorer.Item;
@@ -7,15 +9,21 @@ import explorer.Photo;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -82,6 +90,19 @@ public class Controller {
     @FXML
     private TreeView<Item> treeExplorer;
 
+    private int maxHeightOfWindow = 600;
+    private int maxWidthOfWindow = 600;
+
+    private void showError(String errorString) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+
+        alert.setTitle("Information");
+        alert.setHeaderText(null);
+        alert.setContentText(errorString);
+
+        alert.showAndWait();
+    }
+
     private TreeItem<Item> createNodes(File f) {
         return new TreeItem<>((f.isFile()) ? new Photo(UUID.randomUUID().toString(), f) : new Folder(UUID.randomUUID().toString(), f)) {
             private boolean isLeaf;
@@ -123,7 +144,7 @@ public class Controller {
                     ObservableList<TreeItem<Item>> children = FXCollections.observableArrayList();
                     for (File childFile : files) {
                         String fileEx = ExplorerCommands.getFileExtension(childFile.getName());
-                        if (fileEx.equals("jpeg") || fileEx.equals(""))
+                        if (fileEx.equals("jpeg") || fileEx.equals("") || fileEx.equals("jpg"))
                             children.add(createNodes(childFile));
                     }
                     return children;
@@ -133,13 +154,48 @@ public class Controller {
         };
     }
 
+    private double[] getSizeImg(double height, double width) {
+        double[] size = new double[2];
+        size[0] = getValueForSize(height);
+        size[1] = getValueForSize(width);
+        return size;
+    }
+
+    private double getValueForSize(double value) {
+        if (value / 2 < 400) {
+            return 400;
+        }
+        if (value > maxHeightOfWindow) {
+            return maxHeightOfWindow;
+        }
+        return value / 2;
+    }
+
     private ContextMenu createContexMenu() {
         ContextMenu cm = new ContextMenu();
         MenuItem openFile = new MenuItem("Открыть");
         openFile.setOnAction(event -> {
             if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
                 if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
-                    System.out.println("ФОткрываю фотку!");
+                    try {
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/imgViewer.fxml"));
+                        Parent root = loader.load();
+                        Stage stage = new Stage();
+                        stage.setTitle(treeExplorer.getSelectionModel().getSelectedItem().getValue().getName());
+                        stage.setScene(new Scene(root, maxHeightOfWindow, maxWidthOfWindow));
+                        ImgViewer ctrl = loader.getController();
+                        Image img = new Image(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().toURI().toString());
+                        double[] size = getSizeImg(img.getHeight(), img.getWidth());
+                        ctrl.setImage(img, size[1], size[0]);
+                        stage.setResizable(false);
+                        stage.setHeight(size[0]);
+                        stage.setWidth(size[1]);
+                        stage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        showError("Допущена ошибка при открывании фотографии!");
+                    }
+
                 } else {
                     treeExplorer.getSelectionModel().getSelectedItem().setExpanded(true);
                 }
@@ -199,9 +255,9 @@ public class Controller {
                         }
                     }
                     if (canShareFolder) {
-                        System.out.println("Можно передать");//TODO: Ошбика при передачи папки
+                        Client client = new Client();
                     } else {
-                        System.out.println("Нельзя передать");
+                        showError("Папка содержит подпапки! Выберите другую папку!!!");
                     }
                 }
             }
@@ -209,7 +265,6 @@ public class Controller {
         cm.getItems().add(shareFolder);
         return cm;
     }
-
 
     @FXML
     void initialize() {
@@ -311,16 +366,11 @@ public class Controller {
             }
         });
 
-        ButtonStart1.setOnAction(actionEvent -> new
-
-                Thread(() ->
-
+        ButtonStart1.setOnAction(actionEvent -> new Thread(() ->
         {
             ImageLoading.setVisible(true);
             ImageOk.setVisible(true);
             ImageLoading.setVisible(false);
-        }).
-
-                start());
+        }).start());
     }
 }

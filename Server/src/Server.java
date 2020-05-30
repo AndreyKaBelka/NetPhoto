@@ -1,3 +1,7 @@
+import com.connection.Connection;
+import com.connection.Message;
+import com.connection.MessageType;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

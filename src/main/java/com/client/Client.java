@@ -1,10 +1,13 @@
+package com.client;
+
+import com.connection.Connection;
+import com.connection.Message;
+import com.connection.MessageType;
 import com.files.Folder;
 import com.files.Photo;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -16,7 +19,7 @@ public class Client {
     private String token;
     private long id;
 
-    private Client() {
+    public Client() {
         this.userNumber = getUserNumberFromCMD();
         this.token = getTokenFromCMD();
         this.id = getId();
@@ -86,7 +89,7 @@ public class Client {
         }
     }
 
-    public void run() throws IOException {
+    public void run() {
         SocketThread socketThread = new SocketThread();
         socketThread.setDaemon(true);
         socketThread.start();
@@ -100,29 +103,8 @@ public class Client {
         }
         if (clientConnected) {
             System.out.println("Подключение установлено!");
-            String input;
-            Scanner in = new Scanner(System.in);
             while (clientConnected) {
-                input = in.nextLine();
-                switch (input) {
-                    case "1": {
-                        input = in.nextLine();
-                        sendText(input);
-                        break;
-                    }
-                    case "2": {
-                        ArrayList<Photo> photosToSend = com.album.Client1.getCompressedFiles("E:\\Тест\\Тест");
-                        for (Photo photo : photosToSend) {
-                            sendPhoto(photo);
-                        }
-                        break;
-                    }
-                    case "3": {
-                        Folder folder = new Folder(new File("E:\\Тест"), "Тест");
-                        sendFolder(folder);
-                        break;
-                    }
-                }
+                continue;
             }
         }
     }
@@ -130,7 +112,6 @@ public class Client {
     public class SocketThread extends Thread {
         protected void connectionStatusChange(boolean value) {
             Client.this.clientConnected = value;
-            System.out.println("Я здесь!");
             synchronized (Client.this) {
                 Client.this.notify();
             }

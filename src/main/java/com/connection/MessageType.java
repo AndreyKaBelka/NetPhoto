@@ -1,3 +1,5 @@
+package com.connection;
+
 public enum MessageType {
     MSG_USER1,
     MSG_USER2,
