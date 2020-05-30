@@ -258,14 +258,19 @@ public class Controller {
                     if (canShareFolder) {
                         Client client = new Client(userNumber, UUID.randomUUID().toString());
                         new Thread(() -> {
-                            System.out.println(0);
-                            Thread clientThread = new Thread(client::run);
+                            Thread clientThread = new Thread(() -> {
+                                try {
+                                    client.run();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
                             clientThread.setDaemon(true);
                             clientThread.start();
                             while (client.isClientCanConnect()) {
                                 if (client.isClientConnected()) {
-                                    System.out.println("fet");
                                     client.sendFolder(new com.files.Folder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile(), treeExplorer.getSelectionModel().getSelectedItem().getValue().getName()));
+                                    System.out.println(client.getToken());
                                     break;
                                 }
                             }
@@ -305,7 +310,6 @@ public class Controller {
                     if (newFile != null) {
                         Photo photo = new Photo(UUID.randomUUID().toString(), newFile);
                         photo.setName(s);
-                        System.out.println(s);
                         return photo;
                     }
                 } else {
@@ -313,7 +317,6 @@ public class Controller {
                     if (newFile != null) {
                         Folder folder = new Folder(UUID.randomUUID().toString(), newFile);
                         folder.renameTo(s);
-                        System.out.println(s);
                         return folder;
                     }
                 }
@@ -352,7 +355,6 @@ public class Controller {
         ButtonUser2.setOnAction(actionEvent ->
 
         {
-            userNumber = 2;
             mainmenu.setVisible(false);
             keymenu.setVisible(true);
         });
@@ -361,19 +363,43 @@ public class Controller {
 
         {
             ImageLoading.setVisible(true);
-            try {
-                treeExplorer.setVisible(true);
-                connectedpane.setVisible(true);
-                ImageLoading.setVisible(false);
-                keymenu.setVisible(false);
-            } catch (StringIndexOutOfBoundsException | ArrayIndexOutOfBoundsException e) {
-                e.printStackTrace();
-                ImageBan1.setVisible(true);
+            AtomicReference<Client> client = new AtomicReference<>();
+            if (!TextKey.getText().trim().isBlank()) {
+                client.set(new Client(2, TextKey.getText()));
+                new Thread(() -> {
+                    client.get().run();
+                    while (client.get().isClientCanConnect()) {
+                        if (client.get().isClientConnected()) {
+                            break;
+                        }
+                    }
+                }).start();
+            }
+
+            while (client.get() == null || client.get().isClientCanConnect()) {
+                if (client.get() != null || client.get().isClientConnected()) {
+                    if (Client2.sizeChangedListener()) {
+                        try {
+                            treeExplorer.getRoot().getChildren().clear();
+                            treeExplorer.setRoot(new TreeItem<>(new Folder(Client2.getLastFolder())));
+                            treeExplorer.setVisible(true);
+                            connectedpane.setVisible(true);
+                            ImageLoading.setVisible(false);
+                            keymenu.setVisible(false);
+                            break;
+                        } catch (StringIndexOutOfBoundsException | ArrayIndexOutOfBoundsException e) {
+                            e.printStackTrace();
+                            ImageBan1.setVisible(true);
+                            break;
+                        }
+                    }
+                } else {
+                    showError("Неверный ключ сессии!");
+                }
             }
         });
 
         ButtonBrowse1.setOnAction(actionEvent ->
-
         {
             final DirectoryChooser dirChooser = new DirectoryChooser();
             File dir = dirChooser.showDialog(null);

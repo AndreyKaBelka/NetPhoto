@@ -8,5 +8,6 @@ public enum MessageType {
     TOKEN,
     NUMBER_USER_REQUEST,
     FOLDER,
-    CONNECTED
+    CONNECTED,
+    ERROR
 }

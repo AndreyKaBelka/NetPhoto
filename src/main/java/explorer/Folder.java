@@ -18,6 +18,12 @@ public class Folder extends Item {
         this.id = id;
     }
 
+    public Folder(com.files.Folder folder) {
+        super(folder.getName(), String.valueOf(folder.getId()), Consts.fold);
+        this.name = folder.getName();
+        this.id = String.valueOf(folder.getId());
+    }
+
     public String getName() {
         return name;
     }

@@ -88,8 +88,8 @@ public class Server {
                         numberConnectionUser.put(message.getUserId(), MessageType.MSG_USER2);
                         return message.getUserId();
                     } else {
+                        connection.sendMessage(new Message(MessageType.ERROR, "Неверный токен сессии!"));
                         connection.close();
-                        throw new Exception("Неверный ключ сессии!");
                     }
                 }
             }

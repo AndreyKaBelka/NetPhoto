@@ -134,6 +134,9 @@ public class Client {
                 } else if (message.getMsgType() == MessageType.CONNECTED) {
                     connectionStatusChange(true);
                     break;
+                } else if (message.getMsgType() == MessageType.ERROR) {
+                    connectionStatusChange(false);
+                    throw new IOException("Неверный ключ сесии!");
                 }
             }
         }
@@ -146,7 +149,8 @@ public class Client {
                     System.out.println("Получено фото: " + message.getPhoto());
                     Client2.downloadFiles("E:\\Полученное фото", message.getPhoto());
                 } else if (message.getMsgType() == MessageType.FOLDER) {
-                    System.out.println("Получена папка!!");//TODO:Сделать получение папки пользователем
+                    System.out.println("Получена папка!!");
+                    Client2.addNewFolder(message.getFolder());
                 } else if (message.getMsgType() == MessageType.TEXT) {
                     System.out.println(message.getText());
                 } else {
