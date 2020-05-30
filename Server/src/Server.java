@@ -43,6 +43,7 @@ public class Server {
         ArrayList<Long> ids = tokens.get(message.getTokenOfSession());
         long secondUserId = (ids.get(0) == message.getUserId()) ? ids.get(1) : ids.get(0);
         try {
+            System.out.println("sdfs");
             connectionArray.get(secondUserId).sendMessage(message);
         } catch (IOException e) {
             Console.writeMessage("Ошибка в отправке сообщения!");
@@ -71,7 +72,7 @@ public class Server {
                             numberConnectionUser.put(message.getUserId(), MessageType.MSG_USER1);
                             return message.getUserId();
                         } catch (IOException e) {
-                            Console.writeMessage(e.toString());
+                            Console.writeMessage(e.getMessage());
                             connection.close();
                         }
                     } else {
@@ -110,17 +111,21 @@ public class Server {
                         Console.writeMessage("Пользователь: " + userId + " прислал фотографию: " + message.getPhoto().toString());
                         sendToSecondUser(message);
                     } else if (message.getMsgType() == MessageType.FOLDER) {
-                        Console.writeMessage("Пользователь: " + userId + " прислал информацию о папке: " + message.getFolder().toString());
+                        Console.writeMessage("Пользователь: " + userId + " прислал информацию о папке: " + message.getFolder().getName());
                         if (numberConnectionUser.get(message.getUserId()) == MessageType.MSG_USER1) {
                             foldersArray.put(message.getTokenOfSession(), message);
                         } else {
                             sendToSecondUser(message);
                         }
+                    } else if (message.getMsgType() == MessageType.DOWNLOAD_PHOTO) {
+                        Console.writeMessage("Пользователь: " + userId + " прислал запрос на получение фотографий из сессии: " + message.getTokenOfSession());
+                        sendToSecondUser(message);
                     } else {
                         Console.writeMessage("Ошибка отправки сообщения!!!");
                     }
                 } catch (Exception e) {
                     System.out.println("Не могу отпарвить папку!");
+                    e.printStackTrace();
                 }
             }
         }

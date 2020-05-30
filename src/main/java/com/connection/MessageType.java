@@ -9,5 +9,6 @@ public enum MessageType {
     NUMBER_USER_REQUEST,
     FOLDER,
     CONNECTED,
-    ERROR
+    ERROR,
+    DOWNLOAD_PHOTO
 }

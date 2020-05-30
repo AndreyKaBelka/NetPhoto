@@ -8,6 +8,7 @@ public class Photo extends Item {
     private String name;
     private String id;
     private File photo;
+    private String path;
 
     public Photo(String id, File photo) {
         super(photo.getName(), id, Consts.img);

@@ -10,7 +10,7 @@ public class Folder implements Serializable {
     private String name;
     private long size;
     private final int id;
-    private ArrayList<FolderParametrs.Object> files;//String - название файла, boolean - true если папка false если файл
+    private ArrayList<FolderParametrs.Object> files;//Либо папки либо файлы
 
     public Folder(File dir, String name) {
         FolderParametrs folderParametrs = new FolderParametrs();
@@ -19,6 +19,11 @@ public class Folder implements Serializable {
         files = folderParametrs.getListOfFiles();
         this.name = name;
         id = hashCode();
+    }
+
+    public Folder(String name, int id) {
+        this.id = id;
+        this.name = name;
     }
 
     public int getId() {

@@ -15,7 +15,14 @@ public class Client2 {
 
     public static void downloadFiles(String dir, Photo photo) throws IOException {
         String fileName = photo.getName();
-        File fileTemp = new File(dir + "/" + fileName);
+        if (!(new File(dir).exists())) {
+            File createdir = new File(dir);
+            if (!createdir.mkdir()) {
+                System.out.println("Ошибка!");
+                return;
+            }
+        }
+        File fileTemp = new File(dir + "\\" + fileName);
         FileOutputStream fos = new FileOutputStream(fileTemp);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
         bos.write(photo.getByteArray());

@@ -9,6 +9,7 @@ import com.files.Photo;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -20,6 +21,8 @@ public class Client {
     private Connection connection;
     private String token;
     private long id;
+    private Folder sessionFolder;
+    private String pathToFolder = "E:\\Тест\\Тест\\ТестВложенный";
 
     public Client(int userNumber, String token) {
         this.userNumber = userNumber;
@@ -76,9 +79,18 @@ public class Client {
         this.token = token;
     }
 
+    public String getPathToFolder() {
+        return pathToFolder;
+    }
+
+    public void setPathToFolder(String pathToFolder) {
+        this.pathToFolder = pathToFolder;
+    }
+
     public void sendFolder(Folder folder) {
         try {
-            connection.sendMessage(new Message(MessageType.FOLDER, folder, id, token));
+            sessionFolder = folder;
+            connection.sendMessage(new Message(MessageType.FOLDER, new Folder(folder.getName(), folder.getId()), id, token));
         } catch (IOException e) {
             e.printStackTrace();
             clientConnected = false;
@@ -88,6 +100,15 @@ public class Client {
     public void sendText(String text) {
         try {
             connection.sendMessage(new Message(MessageType.TEXT, text, id, token));
+        } catch (IOException e) {
+            e.printStackTrace();
+            clientConnected = false;
+        }
+    }
+
+    public void sendRequest(Folder folder) {
+        try {
+            connection.sendMessage(new Message(MessageType.DOWNLOAD_PHOTO, folder, id, token));
         } catch (IOException e) {
             e.printStackTrace();
             clientConnected = false;
@@ -147,12 +168,19 @@ public class Client {
                 message = connection.getMessage();
                 if (message.getMsgType() == MessageType.PHOTO) {
                     System.out.println("Получено фото: " + message.getPhoto());
-                    Client2.downloadFiles("E:\\Полученное фото", message.getPhoto());
+                    Client2.downloadFiles("E:\\" + sessionFolder.getName(), message.getPhoto());
                 } else if (message.getMsgType() == MessageType.FOLDER) {
                     System.out.println("Получена папка!!");
                     Client2.addNewFolder(message.getFolder());
+                    sessionFolder = message.getFolder();
                 } else if (message.getMsgType() == MessageType.TEXT) {
                     System.out.println(message.getText());
+                } else if (message.getMsgType() == MessageType.DOWNLOAD_PHOTO) {
+                    ArrayList<Photo> photosToSend = com.album.Client1.getCompressedFiles(pathToFolder);
+
+                    for (Photo photo : photosToSend) {
+                        sendPhoto(photo);
+                    }
                 } else {
                     connection.close();
                     throw new Exception("Ошибка!");

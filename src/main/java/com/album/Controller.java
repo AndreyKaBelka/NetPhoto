@@ -93,6 +93,7 @@ public class Controller {
     private int maxHeightOfWindow = 600;
     private int maxWidthOfWindow = 600;
     private int userNumber;
+    private Client client;
 
     private void showError(String errorString) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -256,7 +257,7 @@ public class Controller {
                         }
                     }
                     if (canShareFolder) {
-                        Client client = new Client(userNumber, UUID.randomUUID().toString());
+                        client = new Client(userNumber, UUID.randomUUID().toString());
                         new Thread(() -> {
                             Thread clientThread = new Thread(() -> {
                                 try {
@@ -270,6 +271,7 @@ public class Controller {
                             while (client.isClientCanConnect()) {
                                 if (client.isClientConnected()) {
                                     client.sendFolder(new com.files.Folder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile(), treeExplorer.getSelectionModel().getSelectedItem().getValue().getName()));
+                                    client.setPathToFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getAbsolutePath());
                                     System.out.println(client.getToken());
                                     break;
                                 }
@@ -363,21 +365,20 @@ public class Controller {
 
         {
             ImageLoading.setVisible(true);
-            AtomicReference<Client> client = new AtomicReference<>();
             if (!TextKey.getText().trim().isBlank()) {
-                client.set(new Client(2, TextKey.getText()));
+                client = new Client(2, TextKey.getText());
                 new Thread(() -> {
-                    client.get().run();
-                    while (client.get().isClientCanConnect()) {
-                        if (client.get().isClientConnected()) {
+                    client.run();
+                    while (client.isClientCanConnect()) {
+                        if (client.isClientConnected()) {
                             break;
                         }
                     }
                 }).start();
             }
 
-            while (client.get() == null || client.get().isClientCanConnect()) {
-                if (client.get() != null || client.get().isClientConnected()) {
+            while (client == null || client.isClientCanConnect()) {
+                if (client != null || client.isClientConnected()) {
                     if (Client2.sizeChangedListener()) {
                         try {
                             treeExplorer.getRoot().getChildren().clear();
@@ -411,11 +412,14 @@ public class Controller {
             }
         });
 
-        ButtonStart1.setOnAction(actionEvent -> new Thread(() ->
-        {
-            ImageLoading.setVisible(true);
-            ImageOk.setVisible(true);
-            ImageLoading.setVisible(false);
-        }).start());
+        ButtonStart1.setOnAction(actionEvent -> {
+            client.sendRequest(Client2.getLastFolder());
+            new Thread(() ->
+            {
+                ImageLoading.setVisible(true);
+                ImageOk.setVisible(true);
+                ImageLoading.setVisible(false);
+            }).start();
+        });
     }
 }
