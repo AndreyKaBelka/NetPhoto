@@ -92,6 +92,7 @@ public class Controller {
 
     private int maxHeightOfWindow = 600;
     private int maxWidthOfWindow = 600;
+    private int userNumber;
 
     private void showError(String errorString) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -255,7 +256,16 @@ public class Controller {
                         }
                     }
                     if (canShareFolder) {
-                        Client client = new Client();
+                        Client client = new Client(userNumber, UUID.randomUUID().toString());
+                        new Thread(() -> {
+                            client.run();
+                            while (client.isClientCanConnect()) {
+                                if (client.isClientConnected()) {
+                                    return;
+                                }
+                            }
+                            showError("Ошибка в подключении к серверу!");
+                        }).start();
                     } else {
                         showError("Папка содержит подпапки! Выберите другую папку!!!");
                     }
@@ -313,6 +323,7 @@ public class Controller {
         ButtonUser1.setOnAction(actionEvent ->
 
         {
+            userNumber = 1;
             mainmenu.setVisible(false);
             servermenu.setVisible(true);
             treeExplorer.setVisible(true);
@@ -334,6 +345,7 @@ public class Controller {
         ButtonUser2.setOnAction(actionEvent ->
 
         {
+            userNumber = 2;
             mainmenu.setVisible(false);
             keymenu.setVisible(true);
         });

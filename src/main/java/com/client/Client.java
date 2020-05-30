@@ -15,19 +15,15 @@ import java.util.Scanner;
 public class Client {
     private final int userNumber;
     private volatile boolean clientConnected = false;
+    private volatile boolean clientCanConnect = true;
     private Connection connection;
     private String token;
     private long id;
 
-    public Client() {
-        this.userNumber = getUserNumberFromCMD();
-        this.token = getTokenFromCMD();
+    public Client(int userNumber, String token) {
+        this.userNumber = userNumber;
+        this.token = token;
         this.id = getId();
-    }
-
-    public static void main(String[] args) throws IOException {
-        Client client = new Client();
-        client.run();
     }
 
     private long getId() {
@@ -53,6 +49,14 @@ public class Client {
             e.printStackTrace();
             clientConnected = false;
         }
+    }
+
+    public boolean isClientCanConnect() {
+        return clientCanConnect;
+    }
+
+    public boolean isClientConnected() {
+        return clientConnected;
     }
 
     private int getServerPort() {
@@ -104,8 +108,10 @@ public class Client {
         if (clientConnected) {
             System.out.println("Подключение установлено!");
             while (clientConnected) {
-                continue;
             }
+        } else {
+            System.out.println("Ошибка подключения!");
+            clientCanConnect = !clientCanConnect;
         }
     }
 
@@ -160,7 +166,9 @@ public class Client {
                 clientLoop();
             } catch (IOException | ClassNotFoundException e) {
                 System.out.println("Ошибка в подключении!sdf");
+                connectionStatusChange(false);
             } catch (Exception e) {
+                connectionStatusChange(false);
                 System.out.println("Ошибка в подключении!\n" + e);
             }
         }

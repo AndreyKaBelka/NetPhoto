@@ -92,17 +92,21 @@ public class Server {
             Message message;
             for (; ; ) {
                 message = connection.getMessage();
-                if (message.getMsgType() == MessageType.TEXT) {
-                    Console.writeMessage("Пользователь: " + userId + " прислал сообщение: \"" + message.getText() + "\"");
-                    sendToSecondUser(message);
-                } else if (message.getMsgType() == MessageType.PHOTO) {
-                    Console.writeMessage("Пользователь: " + userId + " прислал фотографию: " + message.getPhoto().toString());
-                    sendToSecondUser(message);
-                } else if (message.getMsgType() == MessageType.FOLDER) {
-                    Console.writeMessage("Пользователь: " + userId + " прислал информацию о папке: " + message.getFolder().toString());
-                    sendToSecondUser(message);
-                } else {
-                    Console.writeMessage("Ошибка отправки сообщения!!!");
+                try {
+                    if (message.getMsgType() == MessageType.TEXT) {
+                        Console.writeMessage("Пользователь: " + userId + " прислал сообщение: \"" + message.getText() + "\"");
+                        sendToSecondUser(message);
+                    } else if (message.getMsgType() == MessageType.PHOTO) {
+                        Console.writeMessage("Пользователь: " + userId + " прислал фотографию: " + message.getPhoto().toString());
+                        sendToSecondUser(message);
+                    } else if (message.getMsgType() == MessageType.FOLDER) {
+                        Console.writeMessage("Пользователь: " + userId + " прислал информацию о папке: " + message.getFolder().toString());
+                        sendToSecondUser(message);
+                    } else {
+                        Console.writeMessage("Ошибка отправки сообщения!!!");
+                    }
+                } catch (Exception e) {
+                    System.out.println("Не могу отпарвить папку!");
                 }
             }
         }
