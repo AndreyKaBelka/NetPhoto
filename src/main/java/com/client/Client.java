@@ -1,5 +1,6 @@
 package com.client;
 
+import com.album.Client2;
 import com.connection.Connection;
 import com.connection.Message;
 import com.connection.MessageType;
@@ -14,8 +15,8 @@ import java.util.Scanner;
 
 public class Client {
     private final int userNumber;
-    private volatile boolean clientConnected = false;
-    private volatile boolean clientCanConnect = true;
+    private boolean clientConnected = false;
+    private boolean clientCanConnect = true;
     private Connection connection;
     private String token;
     private long id;
@@ -51,11 +52,11 @@ public class Client {
         }
     }
 
-    public boolean isClientCanConnect() {
+    public synchronized boolean isClientCanConnect() {
         return clientCanConnect;
     }
 
-    public boolean isClientConnected() {
+    public synchronized boolean isClientConnected() {
         return clientConnected;
     }
 
@@ -107,11 +108,12 @@ public class Client {
         }
         if (clientConnected) {
             System.out.println("Подключение установлено!");
+            clientConnected = true;
             while (clientConnected) {
             }
         } else {
             System.out.println("Ошибка подключения!");
-            clientCanConnect = !clientCanConnect;
+            clientCanConnect = false;
         }
     }
 
@@ -142,11 +144,9 @@ public class Client {
                 message = connection.getMessage();
                 if (message.getMsgType() == MessageType.PHOTO) {
                     System.out.println("Получено фото: " + message.getPhoto());
-                    com.album.Client2.downloadFiles("E:\\Полученное фото", message.getPhoto());
+                    Client2.downloadFiles("E:\\Полученное фото", message.getPhoto());
                 } else if (message.getMsgType() == MessageType.FOLDER) {
-                    System.out.println("Получена папка!!");
-                    Folder folder = message.getFolder();
-                    System.out.println(folder);
+                    System.out.println("Получена папка!!");//TODO:Сделать получение папки пользователем
                 } else if (message.getMsgType() == MessageType.TEXT) {
                     System.out.println(message.getText());
                 } else {

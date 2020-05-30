@@ -258,14 +258,21 @@ public class Controller {
                     if (canShareFolder) {
                         Client client = new Client(userNumber, UUID.randomUUID().toString());
                         new Thread(() -> {
-                            client.run();
+                            System.out.println(0);
+                            Thread clientThread = new Thread(client::run);
+                            clientThread.setDaemon(true);
+                            clientThread.start();
                             while (client.isClientCanConnect()) {
                                 if (client.isClientConnected()) {
-                                    return;
+                                    System.out.println("fet");
+                                    client.sendFolder(new com.files.Folder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile(), treeExplorer.getSelectionModel().getSelectedItem().getValue().getName()));
+                                    break;
                                 }
                             }
-                            showError("Ошибка в подключении к серверу!");
                         }).start();
+                        if (!client.isClientCanConnect()) {
+                            showError("Ошибка в подключении к серверу!");
+                        }
                     } else {
                         showError("Папка содержит подпапки! Выберите другую папку!!!");
                     }

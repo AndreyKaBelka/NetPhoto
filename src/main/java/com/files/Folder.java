@@ -45,6 +45,7 @@ public class Folder implements Serializable {
             } else {
                 stringBuilder.append(object.photo);
             }
+            stringBuilder.append(" ");
         }
         return stringBuilder.toString();
     }

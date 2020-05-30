@@ -14,6 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Server {
     private static Map<Long, Connection> connectionArray = new ConcurrentHashMap<>();
     private static Map<String, ArrayList<Long>> tokens = new HashMap<>();
+    private static Map<Long, String> userTokens = new HashMap<>();
+    private static Map<String, Message> foldersArray = new HashMap<>();
+    private static Map<Long, MessageType> numberConnectionUser = new HashMap<>();
     private static final int PORT = 3443;
     private static String IP = null;
 
@@ -61,9 +64,11 @@ public class Server {
                     String token = message.getText();
                     if (token != null && !token.isEmpty()) {
                         tokens.put(token, new ArrayList<>(Collections.singletonList(message.getUserId())));
+                        userTokens.put(message.getUserId(), message.getTokenOfSession());
                         try {
                             connectionArray.put(message.getUserId(), connection);
                             connection.sendMessage(new Message(MessageType.CONNECTED));
+                            numberConnectionUser.put(message.getUserId(), MessageType.MSG_USER1);
                             return message.getUserId();
                         } catch (IOException e) {
                             Console.writeMessage(e.toString());
@@ -77,8 +82,10 @@ public class Server {
                     String token = message.getText();
                     if (token != null && !token.isEmpty() && tokens.containsKey(token)) {
                         tokens.get(token).add(message.getUserId());
+                        userTokens.put(message.getUserId(), message.getTokenOfSession());
                         connectionArray.put(message.getUserId(), connection);
                         connection.sendMessage(new Message(MessageType.CONNECTED));
+                        numberConnectionUser.put(message.getUserId(), MessageType.MSG_USER2);
                         return message.getUserId();
                     } else {
                         connection.close();
@@ -89,6 +96,9 @@ public class Server {
         }
 
         private void serverLoopForUsers(Connection connection, long userId) throws IOException, ClassNotFoundException {
+            if (numberConnectionUser.get(userId) == MessageType.MSG_USER2) {
+                sendToSecondUser(foldersArray.get(userTokens.get(userId)));
+            }
             Message message;
             for (; ; ) {
                 message = connection.getMessage();
@@ -101,7 +111,12 @@ public class Server {
                         sendToSecondUser(message);
                     } else if (message.getMsgType() == MessageType.FOLDER) {
                         Console.writeMessage("Пользователь: " + userId + " прислал информацию о папке: " + message.getFolder().toString());
-                        sendToSecondUser(message);
+                        if (numberConnectionUser.get(message.getUserId()) == MessageType.MSG_USER1) {
+                            foldersArray.put(message.getTokenOfSession(), message);
+                            System.out.println(message.getFolder());
+                        } else {
+                            sendToSecondUser(message);
+                        }
                     } else {
                         Console.writeMessage("Ошибка отправки сообщения!!!");
                     }
