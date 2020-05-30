@@ -113,7 +113,6 @@ public class Server {
                         Console.writeMessage("Пользователь: " + userId + " прислал информацию о папке: " + message.getFolder().toString());
                         if (numberConnectionUser.get(message.getUserId()) == MessageType.MSG_USER1) {
                             foldersArray.put(message.getTokenOfSession(), message);
-                            System.out.println(message.getFolder());
                         } else {
                             sendToSecondUser(message);
                         }
