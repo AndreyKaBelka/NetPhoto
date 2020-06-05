@@ -33,7 +33,7 @@ public class Client2 {
         folderArrayList.add(folder);
     }
 
-    public static boolean sizeChangedListener() {
+    static boolean sizeChangedListener() {
         if (folderArrayList.size() != lastSize) {
             lastSize = folderArrayList.size();
             lastSize++;
@@ -42,7 +42,7 @@ public class Client2 {
         return false;
     }
 
-    public static Folder getLastFolder() {
+    static Folder getLastFolder() {
         return folderArrayList.get(folderArrayList.size() - 1);
     }
 }

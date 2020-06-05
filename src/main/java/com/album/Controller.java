@@ -2,6 +2,7 @@ package com.album;
 
 import com.ImgViewer;
 import com.client.Client;
+import com.client.ClientData;
 import explorer.ExplorerCommands;
 import explorer.Folder;
 import explorer.Item;
@@ -94,6 +95,7 @@ public class Controller {
     private int maxWidthOfWindow = 600;
     private int userNumber;
     private Client client;
+    private String folderPath = "E:\\Тест";
 
     private void showError(String errorString) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -294,7 +296,7 @@ public class Controller {
     void initialize() {
         AtomicReference<String> pathdir = new AtomicReference<>("");
 
-        TreeItem<Item> root = createNodes(new File("E:\\Тест"));
+        TreeItem<Item> root = createNodes(new File(folderPath));
         treeExplorer.setRoot(root);
         treeExplorer.setContextMenu(createContexMenu());
         treeExplorer.setEditable(true);
@@ -310,14 +312,14 @@ public class Controller {
                 if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
                     File newFile = ExplorerCommands.renamePhoto(treeExplorer.getSelectionModel().getSelectedItem().getValue().getParentPhoto(), s);
                     if (newFile != null) {
-                        Photo photo = new Photo(UUID.randomUUID().toString(), newFile);
+                        Photo photo = new Photo(treeExplorer.getSelectionModel().getSelectedItem().getValue().getId(), newFile);
                         photo.setName(s);
                         return photo;
                     }
                 } else {
                     File newFile = ExplorerCommands.renameFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getParentFolder(), s);
                     if (newFile != null) {
-                        Folder folder = new Folder(UUID.randomUUID().toString(), newFile);
+                        Folder folder = new Folder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getId(), newFile);
                         folder.renameTo(s);
                         return folder;
                     }
@@ -333,7 +335,6 @@ public class Controller {
         connectedpane.setVisible(false);
 
         ButtonUser1.setOnAction(actionEvent ->
-
         {
             userNumber = 1;
             mainmenu.setVisible(false);
@@ -342,7 +343,6 @@ public class Controller {
         });
 
         ButtonBrowse.setOnAction(actionEvent ->
-
         {
             final DirectoryChooser dirChooser = new DirectoryChooser();
             File dir = dirChooser.showDialog(null);
@@ -375,10 +375,12 @@ public class Controller {
                         }
                     }
                 }).start();
+            } else {
+                showError("Введите корректный ключ сессии!");
             }
 
-            while (client == null || client.isClientCanConnect()) {
-                if (client != null || client.isClientConnected()) {
+            while (client.isClientCanConnect()) {
+                if (client.isClientConnected()) {
                     if (Client2.sizeChangedListener()) {
                         try {
                             treeExplorer.getRoot().getChildren().clear();
@@ -395,8 +397,11 @@ public class Controller {
                         }
                     }
                 } else {
-                    showError("Неверный ключ сессии!");
+                    showError("Ошбика в подключении");
                 }
+            }
+            if (!client.isClientCanConnect()) {
+                showError("Неправильный ключ сессии!");
             }
         });
 
@@ -413,13 +418,24 @@ public class Controller {
         });
 
         ButtonStart1.setOnAction(actionEvent -> {
-            client.sendRequest(Client2.getLastFolder());
-            new Thread(() ->
-            {
+            if (!TextPath1.getText().isBlank() || !TextPath1.getText().isEmpty()) {
+                ClientData.setPathToFolder(TextPath1.getText());
+                client.sendRequest(Client2.getLastFolder());
                 ImageLoading.setVisible(true);
+                while (true) {
+                    if (ClientData.isDownloadEnded()) {
+                        ImageLoading.setVisible(false);
+                        System.out.println("sdfsdgsdg");
+                        break;
+                    }
+                }
                 ImageOk.setVisible(true);
-                ImageLoading.setVisible(false);
-            }).start();
+                treeExplorer.getRoot().getChildren().clear();
+                System.out.println(TextPath1.getText() + "\\" + Client2.getLastFolder().getName());
+                treeExplorer.setRoot(createNodes(new File(TextPath1.getText() + "\\" + Client2.getLastFolder().getName())));
+            } else {
+                showError("Выберите папку для загрузки!");
+            }
         });
     }
 }

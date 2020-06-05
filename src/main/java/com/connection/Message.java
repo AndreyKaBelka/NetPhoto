@@ -16,6 +16,7 @@ public class Message implements Serializable {
     private final Folder folder;//папка
     private final long userId;//id пользователя отправившего сообщение
     private final String tokenOfSession;//токен сессии, в которой происходит обмен сообщениями
+    private int cnt_photo;
 
 
     public Message(MessageType msgType, String text, long userId, String tokenOfSession) {
@@ -27,13 +28,14 @@ public class Message implements Serializable {
         this.tokenOfSession = tokenOfSession;
     }
 
-    public Message(MessageType msgType, Photo photo, long userId, String tokenOfSession) {
+    public Message(MessageType msgType, Photo photo, int cnt_photo, long userId, String tokenOfSession) {
         this.msgType = msgType;
         this.photo = photo;
         this.text = null;
         this.userId = userId;
         this.folder = null;
         this.tokenOfSession = tokenOfSession;
+        this.cnt_photo = cnt_photo;
     }
 
     public Message(MessageType msgType, Folder folder, long userId, String tokenOfSession) {
@@ -116,6 +118,10 @@ public class Message implements Serializable {
 
     public Folder getFolder() {
         return folder;
+    }
+
+    public int getCnt_photo() {
+        return cnt_photo;
     }
 
     @Override

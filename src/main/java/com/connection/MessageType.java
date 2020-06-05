@@ -10,5 +10,6 @@ public enum MessageType {
     FOLDER,
     CONNECTED,
     ERROR,
-    DOWNLOAD_PHOTO
+    DOWNLOAD_PHOTO,
+    PHOTO_CNT
 }

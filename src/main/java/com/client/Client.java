@@ -23,6 +23,8 @@ public class Client {
     private long id;
     private Folder sessionFolder;
     private String pathToFolder = "E:\\Тест\\Тест\\ТестВложенный";
+    private ArrayList<Photo> sendedPhotos;
+    private int cnt_photos = 0;
 
     public Client(int userNumber, String token) {
         this.userNumber = userNumber;
@@ -46,9 +48,9 @@ public class Client {
         return in.nextLine();
     }
 
-    public void sendPhoto(Photo photo) {
+    public void sendPhoto(Photo photo, int cnt) {
         try {
-            connection.sendMessage(new Message(MessageType.PHOTO, photo, id, token));
+            connection.sendMessage(new Message(MessageType.PHOTO, photo, cnt, id, token));
         } catch (IOException e) {
             e.printStackTrace();
             clientConnected = false;
@@ -89,8 +91,22 @@ public class Client {
 
     public void sendFolder(Folder folder) {
         try {
-            sessionFolder = folder;
-            connection.sendMessage(new Message(MessageType.FOLDER, new Folder(folder.getName(), folder.getId()), id, token));
+            if (this.userNumber == 1) {
+                sessionFolder = folder;
+                cnt_photos = sessionFolder.getFiles().size();
+                connection.sendMessage(new Message(MessageType.FOLDER, new Folder(folder.getName(), folder.getId()), id, token));
+            } else {
+                connection.sendMessage(new Message(MessageType.FOLDER, folder, id, token));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            clientConnected = false;
+        }
+    }
+
+    public void sendMessage(Message message) {
+        try {
+            connection.sendMessage(message);
         } catch (IOException e) {
             e.printStackTrace();
             clientConnected = false;
@@ -139,7 +155,7 @@ public class Client {
     }
 
     public class SocketThread extends Thread {
-        protected void connectionStatusChange(boolean value) {
+        void connectionStatusChange(boolean value) {
             Client.this.clientConnected = value;
             synchronized (Client.this) {
                 Client.this.notify();
@@ -166,9 +182,14 @@ public class Client {
             Message message;
             for (; ; ) {
                 message = connection.getMessage();
+                System.out.println(message.getMsgType());
                 if (message.getMsgType() == MessageType.PHOTO) {
                     System.out.println("Получено фото: " + message.getPhoto());
-                    Client2.downloadFiles("E:\\" + sessionFolder.getName(), message.getPhoto());
+                    Client2.downloadFiles(ClientData.getPathToFolder() + "\\" + sessionFolder.getName(), message.getPhoto());
+                    ClientData.setCntPhotos(message.getCnt_photo());
+                    if (ClientData.getCntPhotos() == cnt_photos) {
+                        ClientData.setDownloadEnded(true);
+                    }
                 } else if (message.getMsgType() == MessageType.FOLDER) {
                     System.out.println("Получена папка!!");
                     Client2.addNewFolder(message.getFolder());
@@ -176,11 +197,16 @@ public class Client {
                 } else if (message.getMsgType() == MessageType.TEXT) {
                     System.out.println(message.getText());
                 } else if (message.getMsgType() == MessageType.DOWNLOAD_PHOTO) {
-                    ArrayList<Photo> photosToSend = com.album.Client1.getCompressedFiles(pathToFolder);
-
+                    sendMessage(new Message(MessageType.PHOTO_CNT, String.valueOf(cnt_photos), id, token));
+                    ArrayList<Photo> photosToSend = com.album.Client1.getCompressedFiles(getPathToFolder());
+                    sendedPhotos = photosToSend;
+                    int i = 1;
                     for (Photo photo : photosToSend) {
-                        sendPhoto(photo);
+                        sendPhoto(photo, i);
+                        i++;
                     }
+                } else if (message.getMsgType() == MessageType.PHOTO_CNT) {
+                    cnt_photos = Integer.parseInt(message.getText());
                 } else {
                     connection.close();
                     throw new Exception("Ошибка!");
@@ -197,8 +223,8 @@ public class Client {
                 onConnection();
                 clientLoop();
             } catch (IOException | ClassNotFoundException e) {
-                System.out.println("Ошибка в подключении!sdf");
                 connectionStatusChange(false);
+                System.out.println("Ошибка в подключении!sdf");
             } catch (Exception e) {
                 connectionStatusChange(false);
                 System.out.println("Ошибка в подключении!\n" + e);
