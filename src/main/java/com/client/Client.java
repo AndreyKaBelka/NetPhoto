@@ -191,15 +191,20 @@ public class Client {
                         ClientData.setDownloadEnded(true);
                     }
                 } else if (message.getMsgType() == MessageType.FOLDER) {
-                    System.out.println("Получена папка!!");
-                    Client2.addNewFolder(message.getFolder());
-                    sessionFolder = message.getFolder();
+                    if (userNumber == 1) {
+
+                    } else {
+                        System.out.println("Получена папка!!");
+                        Client2.addNewFolder(message.getFolder());
+                        sessionFolder = message.getFolder();
+                    }
                 } else if (message.getMsgType() == MessageType.TEXT) {
                     System.out.println(message.getText());
                 } else if (message.getMsgType() == MessageType.DOWNLOAD_PHOTO) {
                     sendMessage(new Message(MessageType.PHOTO_CNT, String.valueOf(cnt_photos), id, token));
                     ArrayList<Photo> photosToSend = com.album.Client1.getCompressedFiles(getPathToFolder());
                     sendedPhotos = photosToSend;
+                    sendedPhotos.forEach(item -> System.out.println(item.toString()));
                     int i = 1;
                     for (Photo photo : photosToSend) {
                         sendPhoto(photo, i);

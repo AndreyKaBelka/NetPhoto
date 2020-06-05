@@ -425,13 +425,11 @@ public class Controller {
                 while (true) {
                     if (ClientData.isDownloadEnded()) {
                         ImageLoading.setVisible(false);
-                        System.out.println("sdfsdgsdg");
                         break;
                     }
                 }
                 ImageOk.setVisible(true);
                 treeExplorer.getRoot().getChildren().clear();
-                System.out.println(TextPath1.getText() + "\\" + Client2.getLastFolder().getName());
                 treeExplorer.setRoot(createNodes(new File(TextPath1.getText() + "\\" + Client2.getLastFolder().getName())));
             } else {
                 showError("Выберите папку для загрузки!");
