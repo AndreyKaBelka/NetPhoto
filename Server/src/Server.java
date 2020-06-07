@@ -123,6 +123,9 @@ public class Server {
                     } else if (message.getMsgType() == MessageType.PHOTO_CNT) {
                         Console.writeMessage("Пользователь: " + userId + " прислал запрос на получение кол-ва фотографий: " + message.getTokenOfSession());
                         sendToSecondUser(message);
+                    } else if (message.getMsgType() == MessageType.CHANGES) {
+                        Console.writeMessage("Пользователь: " + userId + " прислал изменения папки для сесси: " + message.getTokenOfSession());
+                        sendToSecondUser(message);
                     } else {
                         Console.writeMessage("Ошибка отправки сообщения!!!");
                     }

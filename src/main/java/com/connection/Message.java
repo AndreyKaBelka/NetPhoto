@@ -2,6 +2,7 @@ package com.connection;
 
 import com.files.Folder;
 import com.files.Photo;
+import explorer.Changes;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -17,6 +18,7 @@ public class Message implements Serializable {
     private final long userId;//id пользователя отправившего сообщение
     private final String tokenOfSession;//токен сессии, в которой происходит обмен сообщениями
     private int cnt_photo;
+    private Changes changes;
 
 
     public Message(MessageType msgType, String text, long userId, String tokenOfSession) {
@@ -95,6 +97,16 @@ public class Message implements Serializable {
         this.tokenOfSession = null;
     }
 
+    public Message(MessageType msgType, Changes changes, long userId, String tokenOfSession) {
+        this.msgType = msgType;
+        this.text = null;
+        this.photo = null;
+        this.userId = userId;
+        this.folder = null;
+        this.tokenOfSession = tokenOfSession;
+        this.changes = changes;
+    }
+
     public MessageType getMsgType() {
         return msgType;
     }
@@ -127,5 +139,9 @@ public class Message implements Serializable {
     @Override
     public String toString() {
         return text;
+    }
+
+    public Changes getChanges() {
+        return changes;
     }
 }

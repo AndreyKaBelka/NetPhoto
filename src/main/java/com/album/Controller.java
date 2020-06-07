@@ -186,7 +186,6 @@ public class Controller {
             if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
                 if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
                     try {
-                        System.out.println(changes.getChanges());
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/imgViewer.fxml"));
                         Parent root = loader.load();
                         Stage stage = new Stage();
@@ -258,49 +257,53 @@ public class Controller {
         cm.getItems().add(createNewFolder);
         MenuItem shareFolder = new MenuItem("Отправить папку");
         shareFolder.setOnAction(event -> {
-            if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
-                if (!treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
-                    boolean canShareFolder = true;
-                    File[] folder = treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().listFiles();
-                    if (folder == null || folder.length == 0) {
-                        canShareFolder = false;
-                    }
-                    if (canShareFolder) {
-                        for (File file : folder) {
-                            if (file.isDirectory()) {
-                                canShareFolder = false;
-                                break;
-                            }
+            if (userNumber == 1) {
+                if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
+                    if (!treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
+                        boolean canShareFolder = true;
+                        File[] folder = treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().listFiles();
+                        if (folder == null || folder.length == 0) {
+                            canShareFolder = false;
                         }
-                    }
-                    if (canShareFolder) {
-                        client = new Client(userNumber, UUID.randomUUID().toString());
-                        new Thread(() -> {
-                            Thread clientThread = new Thread(() -> {
-                                try {
-                                    client.run();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                            clientThread.setDaemon(true);
-                            clientThread.start();
-                            while (client.isClientCanConnect()) {
-                                if (client.isClientConnected()) {
-                                    client.sendFolder(new com.files.Folder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile(), treeExplorer.getSelectionModel().getSelectedItem().getValue().getName()));
-                                    client.setPathToFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getAbsolutePath());
-                                    System.out.println(client.getToken());
+                        if (canShareFolder) {
+                            for (File file : folder) {
+                                if (file.isDirectory()) {
+                                    canShareFolder = false;
                                     break;
                                 }
                             }
-                        }).start();
-                        if (!client.isClientCanConnect()) {
-                            showError("Ошибка в подключении к серверу!");
                         }
-                    } else {
-                        showError("Папка содержит подпапки! Выберите другую папку!!!");
+                        if (canShareFolder) {
+                            client = new Client(userNumber, UUID.randomUUID().toString());
+                            new Thread(() -> {
+                                Thread clientThread = new Thread(() -> {
+                                    try {
+                                        client.run();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                });
+                                clientThread.setDaemon(true);
+                                clientThread.start();
+                                while (client.isClientCanConnect()) {
+                                    if (client.isClientConnected()) {
+                                        client.sendFolder(new com.files.Folder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile(), treeExplorer.getSelectionModel().getSelectedItem().getValue().getName()));
+                                        client.setPathToFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getAbsolutePath());
+                                        System.out.println(client.getToken());
+                                        break;
+                                    }
+                                }
+                            }).start();
+                            if (!client.isClientCanConnect()) {
+                                showError("Ошибка в подключении к серверу!");
+                            }
+                        } else {
+                            showError("Папка содержит подпапки! Выберите другую папку!!!");
+                        }
                     }
                 }
+            } else {
+                client.sendChanges(changes);
             }
         });
         cm.getItems().add(shareFolder);
@@ -363,6 +366,9 @@ public class Controller {
                 try {
                     Files.copy(Path.of(copyPath), Path.of(pathToPaste + "\\" + newCopyName));
                     treeExplorer.getSelectionModel().getSelectedItem().getChildren().add(createNodes(new File(pathToPaste + "\\" + newCopyName)));
+                    if (userNumber == 2) {
+                        changes.addNewChange(new Change(ChangesType.COPY_PHOTO, null, pathToPaste + "\\" + newCopyName, null, copyPath));
+                    }
                 } catch (IOException e) {
                     showError("Не удалось скопировать файл");
                 }
@@ -403,6 +409,9 @@ public class Controller {
                     treeExplorer.getSelectionModel().getSelectedItem().setExpanded(true);
                     treeExplorer.getSelectionModel().getSelectedItem().getChildren().add(createNodes(new File(pathToPaste + "\\" + newCopyName)));
                     itemToDelete.getParent().getChildren().remove(itemToDelete);
+                    if (userNumber == 2) {
+                        changes.addNewChange(new Change(ChangesType.MOVE_PHOTO, null, pathToPaste + "\\" + newCopyName, null, copyPath));
+                    }
                 } catch (IOException e) {
                     showError("Не удалось переместить файл файл");
                 }
@@ -511,14 +520,12 @@ public class Controller {
         });
 
         ButtonUser2.setOnAction(actionEvent ->
-
         {
             mainmenu.setVisible(false);
             keymenu.setVisible(true);
         });
 
         ButtonConnect.setOnAction(actionEvent ->
-
         {
             ImageLoading.setVisible(true);
             userNumber = 2;
@@ -591,7 +598,7 @@ public class Controller {
                     }
                 }
                 ImageOk.setVisible(true);
-                treeExplorer.getRoot().getChildren().clear();
+                treeExplorer.setRoot(null);
                 treeExplorer.setRoot(createNodes(new File(TextPath1.getText() + "\\" + Client2.getLastFolder().getName())));
                 changes = new Changes();
             } else {

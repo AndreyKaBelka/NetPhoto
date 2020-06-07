@@ -5,5 +5,6 @@ public enum ChangesType {
     RENAME_FOLDER,
     RENAME_PHOTO,
     MOVE_PHOTO,
-    DELETE_FOLDER
+    DELETE_FOLDER,
+    COPY_PHOTO
 }

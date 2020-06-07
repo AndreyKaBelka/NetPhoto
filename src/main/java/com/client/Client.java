@@ -6,6 +6,7 @@ import com.connection.Message;
 import com.connection.MessageType;
 import com.files.Folder;
 import com.files.Photo;
+import explorer.Changes;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -46,15 +47,6 @@ public class Client {
         Scanner in = new Scanner(System.in);
         System.out.println("Введите токен");
         return in.nextLine();
-    }
-
-    public void sendPhoto(Photo photo, int cnt) {
-        try {
-            connection.sendMessage(new Message(MessageType.PHOTO, photo, cnt, id, token));
-        } catch (IOException e) {
-            e.printStackTrace();
-            clientConnected = false;
-        }
     }
 
     public synchronized boolean isClientCanConnect() {
@@ -104,6 +96,15 @@ public class Client {
         }
     }
 
+    public void sendPhoto(Photo photo, int cnt) {
+        try {
+            connection.sendMessage(new Message(MessageType.PHOTO, photo, cnt, id, token));
+        } catch (IOException e) {
+            e.printStackTrace();
+            clientConnected = false;
+        }
+    }
+
     public void sendMessage(Message message) {
         try {
             connection.sendMessage(message);
@@ -116,6 +117,15 @@ public class Client {
     public void sendText(String text) {
         try {
             connection.sendMessage(new Message(MessageType.TEXT, text, id, token));
+        } catch (IOException e) {
+            e.printStackTrace();
+            clientConnected = false;
+        }
+    }
+
+    public void sendChanges(Changes changes) {
+        try {
+            connection.sendMessage(new Message(MessageType.CHANGES, changes, id, token));
         } catch (IOException e) {
             e.printStackTrace();
             clientConnected = false;
@@ -185,7 +195,7 @@ public class Client {
                 System.out.println(message.getMsgType());
                 if (message.getMsgType() == MessageType.PHOTO) {
                     System.out.println("Получено фото: " + message.getPhoto());
-                    Client2.downloadFiles(ClientData.getPathToFolder() + "\\" + sessionFolder.getName(), message.getPhoto());
+                    Client2.downloadFiles(ClientData.getPathToFolder() + "\\" + sessionFolder.getName(), message.getPhoto(), message.getCnt_photo());
                     ClientData.setCntPhotos(message.getCnt_photo());
                     if (ClientData.getCntPhotos() == cnt_photos) {
                         ClientData.setDownloadEnded(true);
@@ -208,6 +218,8 @@ public class Client {
                     }
                 } else if (message.getMsgType() == MessageType.PHOTO_CNT) {
                     cnt_photos = Integer.parseInt(message.getText());
+                } else if (message.getMsgType() == MessageType.CHANGES) {
+                    System.out.println(message.getChanges().getChanges());
                 } else {
                     connection.close();
                     throw new Exception("Ошибка!");

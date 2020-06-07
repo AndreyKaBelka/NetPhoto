@@ -13,29 +13,31 @@ public class Client2 {
     private static ArrayList<Folder> folderArrayList = new ArrayList<>();
     private static int lastSize = 0;
 
-    public static void downloadFiles(String dir, Photo photo) throws IOException {
+    public static void downloadFiles(String dir, Photo photo, int cnt_photo) throws IOException {
         String fileName = photo.getName();
         int cnt = 1;
         String newDir = dir;
-        if (!(new File(newDir).exists())) {
-            File createdir = new File(newDir);
-            if (!createdir.mkdir()) {
-                System.out.println("Ошибка!");
-                return;
-            }
-        } else {
-            while (true) {
-                newDir = dir;
-                newDir = newDir + " (" + cnt + ")";
-                if (new File(newDir).exists()) {
-                    cnt++;
-                } else {
-                    File createdDir = new File(newDir);
-                    if (!createdDir.mkdir()) {
-                        System.out.println("Ошибка!");
-                        return;
+        if (cnt_photo == 1) {
+            if (!(new File(newDir).exists())) {
+                File createdir = new File(newDir);
+                if (!createdir.mkdir()) {
+                    System.out.println("Ошибка!");
+                    return;
+                }
+            } else {
+                while (true) {
+                    newDir = dir;
+                    newDir = newDir + " (" + cnt + ")";
+                    if (new File(newDir).exists()) {
+                        cnt++;
                     } else {
-                        break;
+                        File createdDir = new File(newDir);
+                        if (!createdDir.mkdir()) {
+                            System.out.println("Ошибка!");
+                            return;
+                        } else {
+                            break;
+                        }
                     }
                 }
             }

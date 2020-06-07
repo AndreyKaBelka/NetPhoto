@@ -1,12 +1,14 @@
 package explorer;
 
-public class Change {
+import java.io.Serializable;
+
+public class Change implements Serializable {
     private final ChangesType changeType;
     private final String new_name;
     private final String new_path;
     private final String old_name;
     private final String old_path;
-
+    private int id;
 
     public Change(ChangesType changeType, String new_name, String new_path, String old_name, String old_path) {
         this.changeType = changeType;
@@ -14,6 +16,7 @@ public class Change {
         this.new_path = new_path;
         this.old_name = old_name;
         this.old_path = old_path;
+        this.id = hashCode();
     }
 
     public ChangesType getChangeType() {
@@ -38,6 +41,6 @@ public class Change {
 
     @Override
     public String toString() {
-        return "Тип: " + changeType + " Имя фаайла: " + old_name + " Путь файла старый: " + old_path;
+        return "Тип: " + changeType + " Имя файла: " + old_name + " Путь файла старый: " + old_path + " Новое имя файла: " + new_name + " Новый путь: " + new_path + "\n";
     }
 }
