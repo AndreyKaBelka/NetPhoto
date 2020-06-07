@@ -13,9 +13,9 @@ public class Change implements Serializable {
     public Change(ChangesType changeType, String new_name, String new_path, String old_name, String old_path) {
         this.changeType = changeType;
         this.new_name = new_name;
-        this.new_path = new_path;
+        this.new_path = (new_path != null) ? new_path.substring(0, new_path.length() - 1) : null;
         this.old_name = old_name;
-        this.old_path = old_path;
+        this.old_path = (old_path != null) ? old_path.substring(0, old_path.length() - 1) : null;
         this.id = hashCode();
     }
 

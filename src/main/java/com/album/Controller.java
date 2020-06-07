@@ -15,7 +15,6 @@ import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -35,12 +34,6 @@ public class Controller {
 
     @FXML
     private Button ButtonUser2;
-
-    @FXML
-    private Pane Name;
-
-    @FXML
-    private TextArea TextGeneratedKey;
 
     @FXML
     private TextArea TextPath;
@@ -97,6 +90,7 @@ public class Controller {
     private String folderPath = "E:\\Тест";
     private Changes changes;
     private String copyPath;
+    private String copyPathFromTree;
     private boolean isCopy = false;
     private boolean isCut = false;
     private TreeItem<Item> itemToDelete;
@@ -288,8 +282,9 @@ public class Controller {
                                 while (client.isClientCanConnect()) {
                                     if (client.isClientConnected()) {
                                         client.sendFolder(new com.files.Folder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile(), treeExplorer.getSelectionModel().getSelectedItem().getValue().getName()));
-                                        client.setPathToFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getAbsolutePath());
+                                        client.setPathToFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getAbsolutePath().substring(0, treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getAbsolutePath().lastIndexOf('\\')));
                                         System.out.println(client.getToken());
+                                        System.out.println(client.getPathToFolder());
                                         break;
                                     }
                                 }
@@ -311,6 +306,7 @@ public class Controller {
         copyFile.setOnAction(event -> {
             if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
                 copyPath = treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getPath();
+                copyPathFromTree = getPath(treeExplorer.getSelectionModel().getSelectedItem());
                 isCopy = true;
             } else {
                 System.out.println("Извините, допущена ошибка...");
@@ -323,6 +319,7 @@ public class Controller {
             if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
                 copyPath = treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getPath();
                 itemToDelete = treeExplorer.getSelectionModel().getSelectedItem();
+                copyPathFromTree = getPath(itemToDelete);
                 isCut = true;
             } else {
                 System.out.println("Извините, допущена ошибка...");
@@ -365,9 +362,10 @@ public class Controller {
 
                 try {
                     Files.copy(Path.of(copyPath), Path.of(pathToPaste + "\\" + newCopyName));
-                    treeExplorer.getSelectionModel().getSelectedItem().getChildren().add(createNodes(new File(pathToPaste + "\\" + newCopyName)));
+                    TreeItem<Item> newItem = createNodes(new File(pathToPaste + "\\" + newCopyName));
+                    treeExplorer.getSelectionModel().getSelectedItem().getChildren().add(newItem);
                     if (userNumber == 2) {
-                        changes.addNewChange(new Change(ChangesType.COPY_PHOTO, null, pathToPaste + "\\" + newCopyName, null, copyPath));
+                        changes.addNewChange(new Change(ChangesType.COPY_PHOTO, null, getPath(newItem), null, copyPathFromTree));
                     }
                 } catch (IOException e) {
                     showError("Не удалось скопировать файл");
@@ -407,10 +405,11 @@ public class Controller {
                 try {
                     Files.move(Path.of(copyPath), Path.of(pathToPaste + "\\" + newCopyName));
                     treeExplorer.getSelectionModel().getSelectedItem().setExpanded(true);
-                    treeExplorer.getSelectionModel().getSelectedItem().getChildren().add(createNodes(new File(pathToPaste + "\\" + newCopyName)));
+                    TreeItem<Item> newItem = createNodes(new File(pathToPaste + "\\" + newCopyName));
+                    treeExplorer.getSelectionModel().getSelectedItem().getChildren().add(newItem);
                     itemToDelete.getParent().getChildren().remove(itemToDelete);
                     if (userNumber == 2) {
-                        changes.addNewChange(new Change(ChangesType.MOVE_PHOTO, null, pathToPaste + "\\" + newCopyName, null, copyPath));
+                        changes.addNewChange(new Change(ChangesType.MOVE_PHOTO, null, getPath(newItem), null, copyPathFromTree));
                     }
                 } catch (IOException e) {
                     showError("Не удалось переместить файл файл");
@@ -428,19 +427,28 @@ public class Controller {
             } else {
                 pasteFile.setVisible(true);
             }
+            if (userNumber == 2) {
+                if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
+                    deleteFile.setVisible(false);
+                } else {
+                    deleteFile.setVisible(true);
+                }
+            } else {
+                deleteFile.setVisible(true);
+            }
         });
         return cm;
     }
 
     private String getPath(TreeItem<Item> item) {
-        StringBuilder pathToFile = new StringBuilder("");
+        StringBuilder newPath = new StringBuilder();
         TreeItem<Item> parent = item;
         while (parent != null) {
-            pathToFile.append(parent.getValue().getName()).append("\\");
+            newPath.insert(0, parent.getValue().getName() + "\\");
             parent = parent.getParent();
         }
 
-        return pathToFile.toString();
+        return newPath.toString();
     }
 
     @FXML

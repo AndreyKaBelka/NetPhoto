@@ -208,7 +208,7 @@ public class Client {
                     System.out.println(message.getText());
                 } else if (message.getMsgType() == MessageType.DOWNLOAD_PHOTO) {
                     sendMessage(new Message(MessageType.PHOTO_CNT, String.valueOf(cnt_photos), id, token));
-                    ArrayList<Photo> photosToSend = com.album.Client1.getCompressedFiles(getPathToFolder());
+                    ArrayList<Photo> photosToSend = com.album.Client1.getCompressedFiles(getPathToFolder() + "\\" + sessionFolder.getName());
                     sendedPhotos = photosToSend;
                     sendedPhotos.forEach(item -> System.out.println(item.toString()));
                     int i = 1;
@@ -219,7 +219,7 @@ public class Client {
                 } else if (message.getMsgType() == MessageType.PHOTO_CNT) {
                     cnt_photos = Integer.parseInt(message.getText());
                 } else if (message.getMsgType() == MessageType.CHANGES) {
-                    System.out.println(message.getChanges().getChanges());
+                    Changes.acceptChanges(message.getChanges(), getPathToFolder());
                 } else {
                     connection.close();
                     throw new Exception("Ошибка!");

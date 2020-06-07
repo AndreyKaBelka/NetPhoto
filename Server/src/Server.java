@@ -43,7 +43,6 @@ public class Server {
         ArrayList<Long> ids = tokens.get(message.getTokenOfSession());
         long secondUserId = (ids.get(0) == message.getUserId()) ? ids.get(1) : ids.get(0);
         try {
-            System.out.println("sdfs");
             connectionArray.get(secondUserId).sendMessage(message);
         } catch (IOException e) {
             Console.writeMessage("Ошибка в отправке сообщения!");
