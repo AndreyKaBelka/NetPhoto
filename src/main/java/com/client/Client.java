@@ -1,5 +1,6 @@
 package com.client;
 
+import com.ChatController;
 import com.album.Client2;
 import com.connection.Connection;
 import com.connection.Message;
@@ -67,10 +68,6 @@ public class Client {
 
     public String getToken() {
         return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
     public String getPathToFolder() {
@@ -205,7 +202,7 @@ public class Client {
                     Client2.addNewFolder(message.getFolder());
                     sessionFolder = message.getFolder();
                 } else if (message.getMsgType() == MessageType.TEXT) {
-                    System.out.println(message.getText());
+                    ChatController.setText(message.getText());
                 } else if (message.getMsgType() == MessageType.DOWNLOAD_PHOTO) {
                     sendMessage(new Message(MessageType.PHOTO_CNT, String.valueOf(cnt_photos), id, token));
                     ArrayList<Photo> photosToSend = com.album.Client1.getCompressedFiles(getPathToFolder() + "\\" + sessionFolder.getName());

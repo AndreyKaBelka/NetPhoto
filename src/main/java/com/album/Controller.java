@@ -1,5 +1,6 @@
 package com.album;
 
+import com.ChatController;
 import com.ImgViewer;
 import com.client.Client;
 import com.client.ClientData;
@@ -279,16 +280,16 @@ public class Controller {
                                 });
                                 clientThread.setDaemon(true);
                                 clientThread.start();
-                                while (client.isClientCanConnect()) {
-                                    if (client.isClientConnected()) {
-                                        client.sendFolder(new com.files.Folder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile(), treeExplorer.getSelectionModel().getSelectedItem().getValue().getName()));
-                                        client.setPathToFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getAbsolutePath().substring(0, treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getAbsolutePath().lastIndexOf('\\')));
-                                        System.out.println(client.getToken());
-                                        System.out.println(client.getPathToFolder());
-                                        break;
-                                    }
-                                }
                             }).start();
+                            while (client.isClientCanConnect()) {
+                                if (client.isClientConnected()) {
+                                    client.sendFolder(new com.files.Folder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile(), treeExplorer.getSelectionModel().getSelectedItem().getValue().getName()));
+                                    client.setPathToFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getAbsolutePath().substring(0, treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getAbsolutePath().lastIndexOf('\\')));
+                                    System.out.println(client.getToken());
+                                    createChat();
+                                    break;
+                                }
+                            }
                             if (!client.isClientCanConnect()) {
                                 showError("Ошибка в подключении к серверу!");
                             }
@@ -438,6 +439,21 @@ public class Controller {
             }
         });
         return cm;
+    }
+
+    private void createChat() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/chat.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Чат");
+            stage.setScene(new Scene(root, 788, 451));
+            ChatController ctrl = loader.getController();
+            ctrl.setClient(client, userNumber);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private String getPath(TreeItem<Item> item) {
@@ -608,6 +624,7 @@ public class Controller {
                 ImageOk.setVisible(true);
                 treeExplorer.setRoot(null);
                 treeExplorer.setRoot(createNodes(new File(TextPath1.getText() + "\\" + Client2.getLastFolder().getName())));
+                createChat();
                 changes = new Changes();
             } else {
                 showError("Выберите папку для загрузки!");
