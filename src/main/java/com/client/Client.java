@@ -191,13 +191,9 @@ public class Client {
                         ClientData.setDownloadEnded(true);
                     }
                 } else if (message.getMsgType() == MessageType.FOLDER) {
-                    if (userNumber == 1) {
-
-                    } else {
-                        System.out.println("Получена папка!!");
-                        Client2.addNewFolder(message.getFolder());
-                        sessionFolder = message.getFolder();
-                    }
+                    System.out.println("Получена папка!!");
+                    Client2.addNewFolder(message.getFolder());
+                    sessionFolder = message.getFolder();
                 } else if (message.getMsgType() == MessageType.TEXT) {
                     System.out.println(message.getText());
                 } else if (message.getMsgType() == MessageType.DOWNLOAD_PHOTO) {

@@ -1,7 +1,5 @@
 package explorer;
 
-import com.Consts;
-
 import java.io.File;
 
 public class Photo extends Item {
@@ -11,7 +9,7 @@ public class Photo extends Item {
     private String path;
 
     public Photo(String id, File photo) {
-        super(photo.getName(), id, Consts.img);
+        super(photo.getName(), id);
         this.id = id;
         this.name = photo.getName();
         this.photo = photo;

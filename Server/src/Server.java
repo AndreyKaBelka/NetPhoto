@@ -109,7 +109,6 @@ public class Server {
                         sendToSecondUser(message);
                     } else if (message.getMsgType() == MessageType.PHOTO) {
                         Console.writeMessage("Пользователь: " + userId + " прислал фотографию: " + message.getPhoto().toString());
-
                         sendToSecondUser(message);
                     } else if (message.getMsgType() == MessageType.FOLDER) {
                         Console.writeMessage("Пользователь: " + userId + " прислал информацию о папке: " + message.getFolder().getName());

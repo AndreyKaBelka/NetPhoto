@@ -3,10 +3,7 @@ package com.album;
 import com.ImgViewer;
 import com.client.Client;
 import com.client.ClientData;
-import explorer.ExplorerCommands;
-import explorer.Folder;
-import explorer.Item;
-import explorer.Photo;
+import explorer.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -25,6 +22,8 @@ import javafx.util.StringConverter;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -96,6 +95,11 @@ public class Controller {
     private int userNumber;
     private Client client;
     private String folderPath = "E:\\Тест";
+    private Changes changes;
+    private String copyPath;
+    private boolean isCopy = false;
+    private boolean isCut = false;
+    private TreeItem<Item> itemToDelete;
 
     private void showError(String errorString) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -182,6 +186,7 @@ public class Controller {
             if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
                 if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
                     try {
+                        System.out.println(changes.getChanges());
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/imgViewer.fxml"));
                         Parent root = loader.load();
                         Stage stage = new Stage();
@@ -219,6 +224,13 @@ public class Controller {
                     }
                 } else {
                     if (ExplorerCommands.deleteFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getParentFolder())) {
+                        if (userNumber == 2) {
+                            changes.addNewChange(new Change(ChangesType.DELETE_FOLDER,
+                                    null,
+                                    null,
+                                    treeExplorer.getSelectionModel().getSelectedItem().getValue().getParentFolder().getName(),
+                                    getPath(treeExplorer.getSelectionModel().getSelectedItem().getParent())));
+                        }
                         treeExplorer.getSelectionModel().getSelectedItem().getParent().getChildren().remove(treeExplorer.getSelectionModel().getSelectedItem());
                     } else {
                         System.out.println("Ошибка при удалении!");
@@ -235,6 +247,9 @@ public class Controller {
                 File file = ExplorerCommands.createNewFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getParentFolder());
                 if (file != null) {
                     treeExplorer.getSelectionModel().getSelectedItem().getChildren().add(createNodes(file));
+                    if (userNumber == 2) {
+                        changes.addNewChange(new Change(ChangesType.ADD_FOLDER, file.getName(), getPath(treeExplorer.getSelectionModel().getSelectedItem()), null, null));
+                    }
                 } else {
                     System.out.println("Извините, произошла ошибка...");
                 }
@@ -289,7 +304,134 @@ public class Controller {
             }
         });
         cm.getItems().add(shareFolder);
+        MenuItem copyFile = new MenuItem("Копировать");
+        copyFile.setOnAction(event -> {
+            if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
+                copyPath = treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getPath();
+                isCopy = true;
+            } else {
+                System.out.println("Извините, допущена ошибка...");
+            }
+        });
+        cm.getItems().add(copyFile);
+
+        MenuItem cutFile = new MenuItem("Вырезать");
+        cutFile.setOnAction(event -> {
+            if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
+                copyPath = treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getPath();
+                itemToDelete = treeExplorer.getSelectionModel().getSelectedItem();
+                isCut = true;
+            } else {
+                System.out.println("Извините, допущена ошибка...");
+            }
+        });
+        cm.getItems().add(cutFile);
+
+        MenuItem pasteFile = new MenuItem("Вставить");
+        pasteFile.setOnAction(event -> {
+            if (isCopy) {
+                String pathToPaste = treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getPath();
+                String nameOld = ((new File(copyPath).isFile()) ? new File(copyPath).getName() : "");
+                File copiedFile = new File(pathToPaste + "\\" + nameOld);
+                String name;
+                int cnt = 1;
+                if (copiedFile.isDirectory()) {
+                    name = copiedFile.getName() + " - Копия";
+                } else {
+                    name = copiedFile.getName().substring(0, copiedFile.getName().lastIndexOf('.')) + " - Копия" + copiedFile.getName().substring(copiedFile.getName().lastIndexOf('.'));
+                }
+
+                String newCopyName = name;
+
+                while (true) {
+                    File newfile = new File(pathToPaste + "\\" + newCopyName);
+                    if (newfile.exists()) {
+                        if (newfile.isDirectory()) {
+                            newCopyName = name;
+                            newCopyName = newCopyName + "(" + cnt + ")";
+                            cnt++;
+                        } else {
+                            newCopyName = name;
+                            newCopyName = newCopyName.replace("- Копия", "- Копия (" + cnt + ")");
+                            cnt++;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+
+                try {
+                    Files.copy(Path.of(copyPath), Path.of(pathToPaste + "\\" + newCopyName));
+                    treeExplorer.getSelectionModel().getSelectedItem().getChildren().add(createNodes(new File(pathToPaste + "\\" + newCopyName)));
+                } catch (IOException e) {
+                    showError("Не удалось скопировать файл");
+                }
+                isCopy = false;
+            } else if (isCut) {
+                String pathToPaste = treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getPath();
+                String nameOld = ((new File(copyPath).isFile()) ? new File(copyPath).getName() : "");
+                File copiedFile = new File(pathToPaste + "\\" + nameOld);
+                String name;
+                int cnt = 1;
+                if (copiedFile.isDirectory()) {
+                    name = copiedFile.getName() + " - Копия";
+                } else {
+                    name = copiedFile.getName().substring(0, copiedFile.getName().lastIndexOf('.')) + " - Копия" + copiedFile.getName().substring(copiedFile.getName().lastIndexOf('.'));
+                }
+
+                String newCopyName = name;
+
+                while (true) {
+                    File newfile = new File(pathToPaste + "\\" + newCopyName);
+                    if (newfile.exists()) {
+                        if (newfile.isDirectory()) {
+                            newCopyName = name;
+                            newCopyName = newCopyName + "(" + cnt + ")";
+                            cnt++;
+                        } else {
+                            newCopyName = name;
+                            newCopyName = newCopyName.replace("- Копия", "- Копия (" + cnt + ")");
+                            cnt++;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+
+                try {
+                    Files.move(Path.of(copyPath), Path.of(pathToPaste + "\\" + newCopyName));
+                    treeExplorer.getSelectionModel().getSelectedItem().setExpanded(true);
+                    treeExplorer.getSelectionModel().getSelectedItem().getChildren().add(createNodes(new File(pathToPaste + "\\" + newCopyName)));
+                    itemToDelete.getParent().getChildren().remove(itemToDelete);
+                } catch (IOException e) {
+                    showError("Не удалось переместить файл файл");
+                }
+                isCut = false;
+            } else {
+                showError("Никакой файл не вырезан!");
+            }
+        });
+
+        cm.getItems().add(pasteFile);
+        cm.setOnShown(windowEvent -> {
+            if (treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile() || !isCopy && !isCut) {
+                pasteFile.setVisible(false);
+            } else {
+                pasteFile.setVisible(true);
+            }
+        });
         return cm;
+    }
+
+    private String getPath(TreeItem<Item> item) {
+        StringBuilder pathToFile = new StringBuilder("");
+        TreeItem<Item> parent = item;
+        while (parent != null) {
+            pathToFile.append(parent.getValue().getName()).append("\\");
+            parent = parent.getParent();
+        }
+
+        return pathToFile.toString();
     }
 
     @FXML
@@ -314,6 +456,13 @@ public class Controller {
                     if (newFile != null) {
                         Photo photo = new Photo(treeExplorer.getSelectionModel().getSelectedItem().getValue().getId(), newFile);
                         photo.setName(s);
+                        if (userNumber == 2) {
+                            changes.addNewChange(new Change(ChangesType.RENAME_PHOTO,
+                                    s,
+                                    null,
+                                    treeExplorer.getSelectionModel().getSelectedItem().getValue().getName(),
+                                    getPath(treeExplorer.getSelectionModel().getSelectedItem().getParent())));
+                        }
                         return photo;
                     }
                 } else {
@@ -321,6 +470,13 @@ public class Controller {
                     if (newFile != null) {
                         Folder folder = new Folder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getId(), newFile);
                         folder.renameTo(s);
+                        if (userNumber == 2) {
+                            changes.addNewChange(new Change(ChangesType.RENAME_FOLDER,
+                                    s,
+                                    null,
+                                    treeExplorer.getSelectionModel().getSelectedItem().getValue().getName(),
+                                    getPath(treeExplorer.getSelectionModel().getSelectedItem().getParent())));
+                        }
                         return folder;
                     }
                 }
@@ -365,8 +521,9 @@ public class Controller {
 
         {
             ImageLoading.setVisible(true);
+            userNumber = 2;
             if (!TextKey.getText().trim().isBlank()) {
-                client = new Client(2, TextKey.getText());
+                client = new Client(userNumber, TextKey.getText());
                 new Thread(() -> {
                     client.run();
                     while (client.isClientCanConnect()) {
@@ -423,6 +580,11 @@ public class Controller {
                 client.sendRequest(Client2.getLastFolder());
                 ImageLoading.setVisible(true);
                 while (true) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     if (ClientData.isDownloadEnded()) {
                         ImageLoading.setVisible(false);
                         break;
@@ -431,6 +593,7 @@ public class Controller {
                 ImageOk.setVisible(true);
                 treeExplorer.getRoot().getChildren().clear();
                 treeExplorer.setRoot(createNodes(new File(TextPath1.getText() + "\\" + Client2.getLastFolder().getName())));
+                changes = new Changes();
             } else {
                 showError("Выберите папку для загрузки!");
             }

@@ -15,14 +15,32 @@ public class Client2 {
 
     public static void downloadFiles(String dir, Photo photo) throws IOException {
         String fileName = photo.getName();
-        if (!(new File(dir).exists())) {
-            File createdir = new File(dir);
+        int cnt = 1;
+        String newDir = dir;
+        if (!(new File(newDir).exists())) {
+            File createdir = new File(newDir);
             if (!createdir.mkdir()) {
                 System.out.println("Ошибка!");
                 return;
             }
+        } else {
+            while (true) {
+                newDir = dir;
+                newDir = newDir + " (" + cnt + ")";
+                if (new File(newDir).exists()) {
+                    cnt++;
+                } else {
+                    File createdDir = new File(newDir);
+                    if (!createdDir.mkdir()) {
+                        System.out.println("Ошибка!");
+                        return;
+                    } else {
+                        break;
+                    }
+                }
+            }
         }
-        File fileTemp = new File(dir + "\\" + fileName);
+        File fileTemp = new File(newDir + "\\" + fileName);
         FileOutputStream fos = new FileOutputStream(fileTemp);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
         bos.write(photo.getByteArray());
