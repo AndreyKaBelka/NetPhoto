@@ -20,8 +20,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
@@ -95,6 +94,39 @@ public class Controller {
     private boolean isCopy = false;
     private boolean isCut = false;
     private TreeItem<Item> itemToDelete;
+
+    public void copy(File sourceLocation, File targetLocation) throws IOException {
+        if (sourceLocation.isDirectory()) {
+            copyDirectory(sourceLocation, targetLocation);
+        } else {
+            copyFile(sourceLocation, targetLocation);
+        }
+    }
+
+    private void copyDirectory(File source, File target) throws IOException {
+        if (!target.exists()) {
+            target.mkdir();
+        }
+
+        for (String f : source.list()) {
+            copy(new File(source, f), new File(target, f));
+        }
+    }
+
+    private void copyFile(File source, File target) {
+        try (
+                InputStream in = new FileInputStream(source);
+                OutputStream out = new FileOutputStream(target)
+        ) {
+            byte[] buf = new byte[1024];
+            int length;
+            while ((length = in.read(buf)) > 0) {
+                out.write(buf, 0, length);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void showError(String errorString) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -250,8 +282,69 @@ public class Controller {
             }
         });
         cm.getItems().add(createNewFolder);
-        MenuItem shareFolder = new MenuItem("Отправить папку");
-        shareFolder.setOnAction(event -> {
+        Menu shareFolder = new Menu("Отправить папку");
+        MenuItem shareFolderWithCopy = new MenuItem("Изменения к копии");
+        MenuItem shareFolderWithOriginal = new MenuItem("Изменения к оригиналу");
+        shareFolder.getItems().addAll(shareFolderWithCopy, shareFolderWithOriginal);
+        shareFolderWithCopy.setOnAction(event -> {
+            if (userNumber == 1) {
+                if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
+                    if (!treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
+                        boolean canShareFolder = true;
+                        File[] folder = treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().listFiles();
+                        if (folder == null || folder.length == 0) {
+                            canShareFolder = false;
+                        }
+                        if (canShareFolder) {
+                            for (File file : folder) {
+                                if (file.isDirectory()) {
+                                    canShareFolder = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (canShareFolder) {
+                            client = new Client(userNumber, UUID.randomUUID().toString());
+                            new Thread(() -> {
+                                Thread clientThread = new Thread(() -> {
+                                    try {
+                                        client.run();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                });
+                                clientThread.setDaemon(true);
+                                clientThread.start();
+                            }).start();
+                            while (client.isClientCanConnect()) {
+                                if (client.isClientConnected()) {
+                                    String nameFolder = treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getPath();
+                                    File copyFolder = new File(nameFolder + " - Копия");
+                                    try {
+                                        copy(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile(), copyFolder);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    client.setPathToFolder(copyFolder.getAbsolutePath().substring(0, copyFolder.getName().length() + 1));
+                                    client.sendFolder(new com.files.Folder(copyFolder, copyFolder.getName()));
+                                    System.out.println(client.getToken());
+                                    createChat();
+                                    break;
+                                }
+                            }
+                            if (!client.isClientCanConnect()) {
+                                showError("Ошибка в подключении к серверу!");
+                            }
+                        } else {
+                            showError("Папка содержит подпапки! Выберите другую папку!!!");
+                        }
+                    }
+                }
+            } else {
+                client.sendChanges(changes);
+            }
+        });
+        shareFolderWithOriginal.setOnAction(event -> {
             if (userNumber == 1) {
                 if (treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile() != null) {
                     if (!treeExplorer.getSelectionModel().getSelectedItem().getValue().isFile()) {
