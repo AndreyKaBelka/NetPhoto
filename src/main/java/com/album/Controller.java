@@ -30,6 +30,12 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Controller {
 
     @FXML
+    public Slider sliderOddImage;
+
+    @FXML
+    public CheckBox qualityChkBox;
+
+    @FXML
     private Button ButtonUser1;
 
     @FXML
@@ -325,10 +331,12 @@ public class Controller {
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
-                                    client.setPathToFolder(copyFolder.getAbsolutePath().substring(0, copyFolder.getName().length() + 1));
+                                    client.setPathToFolder(copyFolder.getAbsolutePath().substring(0, copyFolder.getAbsolutePath().length() - copyFolder.getName().length() - 1));
                                     client.sendFolder(new com.files.Folder(copyFolder, copyFolder.getName()));
                                     System.out.println(client.getToken());
-                                    createChat();
+                                    System.out.println(copyFolder.getPath());
+                                    System.out.println(client.getPathToFolder());
+                                    createChat("Токен сессии: " + client.getToken());
                                     break;
                                 }
                             }
@@ -379,7 +387,7 @@ public class Controller {
                                     client.sendFolder(new com.files.Folder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile(), treeExplorer.getSelectionModel().getSelectedItem().getValue().getName()));
                                     client.setPathToFolder(treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getAbsolutePath().substring(0, treeExplorer.getSelectionModel().getSelectedItem().getValue().getFile().getAbsolutePath().lastIndexOf('\\')));
                                     System.out.println(client.getToken());
-                                    createChat();
+                                    createChat("Токен сессии: " + client.getToken());
                                     break;
                                 }
                             }
@@ -530,11 +538,16 @@ public class Controller {
             } else {
                 deleteFile.setVisible(true);
             }
+            if (userNumber == 2) {
+                shareFolderWithCopy.setVisible(false);
+            } else {
+                shareFolderWithCopy.setVisible(true);
+            }
         });
         return cm;
     }
 
-    private void createChat() {
+    private void createChat(String startText) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/chat.fxml"));
             Parent root = loader.load();
@@ -543,6 +556,7 @@ public class Controller {
             stage.setScene(new Scene(root, 788, 451));
             ChatController ctrl = loader.getController();
             ctrl.setClient(client, userNumber);
+            ChatController.setText(startText);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -616,6 +630,17 @@ public class Controller {
         servermenu.setVisible(false);
         connectedpane.setVisible(false);
 
+        qualityChkBox.setOnAction(actionEvent -> {
+            if (qualityChkBox.isSelected()) {
+                sliderOddImage.setVisible(true);
+            } else {
+                sliderOddImage.setVisible(false);
+                Client1.compressionQuality = 1f;
+            }
+        });
+
+        sliderOddImage.valueProperty().addListener((observableValue, number, t1) -> Client1.compressionQuality = t1.floatValue());
+
         ButtonUser1.setOnAction(actionEvent ->
         {
             userNumber = 1;
@@ -670,6 +695,7 @@ public class Controller {
                             connectedpane.setVisible(true);
                             ImageLoading.setVisible(false);
                             keymenu.setVisible(false);
+                            createChat("Вы подключились к сессии!");
                             break;
                         } catch (StringIndexOutOfBoundsException | ArrayIndexOutOfBoundsException e) {
                             e.printStackTrace();
@@ -717,7 +743,6 @@ public class Controller {
                 ImageOk.setVisible(true);
                 treeExplorer.setRoot(null);
                 treeExplorer.setRoot(createNodes(new File(TextPath1.getText() + "\\" + Client2.getLastFolder().getName())));
-                createChat();
                 changes = new Changes();
             } else {
                 showError("Выберите папку для загрузки!");

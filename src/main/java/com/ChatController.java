@@ -50,11 +50,15 @@ public class ChatController {
         changedArea.setEditable(false);
         sendButton.setOnMouseClicked(mouseEvent -> {
             if (!inputString.getText().trim().isEmpty() && !inputString.getText().trim().isBlank()) {
-                client.sendText("Пользователь " + userNumber + ": " + inputString.getText().trim());
+                try {
+                    client.sendText("Пользователь " + userNumber + ": " + inputString.getText().trim());
+
+                } catch (Exception e) {
+                    setText("Вы пока одни в сессии! Подождите пользователя 2");
+                }
                 chatHistory.setText(chatHistory.getText() + "\n" + "Пользователь " + userNumber + ": " + inputString.getText().trim());
                 inputString.setText("");
             }
-
         });
 
         Thread thread = new Thread(() -> {

@@ -25,6 +25,10 @@
         <ImageView fx:id="ImageBan" fitHeight="36.0" fitWidth="35.0" layoutX="27.0" layoutY="288.0" visible="false">
             <Image url="@img/ban.png"/>
         </ImageView>
+        <Slider fx:id="sliderOddImage" blockIncrement="0.1" layoutX="330.0" layoutY="323.0" majorTickUnit="1.0"
+                max="1.0" min="0.1" minorTickCount="9" prefHeight="14.0" prefWidth="200.0" showTickLabels="true"
+                showTickMarks="true" value="0.9" visible="false"/>
+        <CheckBox fx:id="qualityChkBox" layoutX="330.0" layoutY="298.0" mnemonicParsing="false" text="Качество фото"/>
     </AnchorPane>
     <AnchorPane fx:id="mainmenu" prefHeight="400.0" prefWidth="600.0" visible="false">
         <Button fx:id="ButtonUser2" layoutX="347.0" layoutY="200.0" mnemonicParsing="false" opacity="0.47"
