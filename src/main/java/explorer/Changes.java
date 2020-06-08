@@ -1,5 +1,7 @@
 package explorer;
 
+import com.ChatController;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -16,14 +18,11 @@ public class Changes implements Serializable {
         id = hashCode();
     }
 
-    public void addNewChange(Change change) {
-        changes.add(change);
-    }
-
     public static void acceptChanges(Changes changes, String pathToFolder) throws IOException {
         ArrayList<Change> listOfChanges = changes.getChanges();
 
         for (Change change : listOfChanges) {
+            ChatController.setChange(change);
             switch (change.getChangeType()) {
                 case ADD_FOLDER: {
                     File newFolder = new File(pathToFolder + "\\" + change.getNew_path() + "\\" + change.getNew_name());
@@ -58,6 +57,11 @@ public class Changes implements Serializable {
                 }
             }
         }
+    }
+
+    public void addNewChange(Change change) {
+        ChatController.setChange(change);
+        changes.add(change);
     }
 
     private ArrayList<Change> getChanges() {

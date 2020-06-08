@@ -1,23 +1,33 @@
 package com;
 
 import com.client.Client;
+import explorer.Change;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class ChatController {
-    private static boolean haveNewMessage = false;
-    private static String newText;
     @FXML
     public TextField inputString;
+
     @FXML
     public Button sendButton;
+
     @FXML
     public TextArea chatHistory;
+
     @FXML
     public TextArea changedArea;
+
     private Client client;
+
+    private static boolean haveNewMessage = false;
+    private static String newText;
+
+    private static boolean haveNewChange = false;
+    private static Change change;
+
     private int userNumber;
 
     public static void setText(String newMessage) {
@@ -25,12 +35,24 @@ public class ChatController {
         haveNewMessage = true;
     }
 
+    public static void setChange(Change newChange) {
+        haveNewChange = true;
+        change = newChange;
+    }
+
+    public void setClient(Client client1, int userNumber1) {
+        client = client1;
+        userNumber = userNumber1;
+    }
+
     @FXML
     void initialize() {
+        changedArea.setEditable(false);
         sendButton.setOnMouseClicked(mouseEvent -> {
             if (!inputString.getText().trim().isEmpty() && !inputString.getText().trim().isBlank()) {
                 client.sendText("Пользователь " + userNumber + ": " + inputString.getText().trim());
                 chatHistory.setText(chatHistory.getText() + "\n" + "Пользователь " + userNumber + ": " + inputString.getText().trim());
+                inputString.setText("");
             }
 
         });
@@ -51,10 +73,22 @@ public class ChatController {
 
         thread.setDaemon(true);
         thread.start();
-    }
 
-    public void setClient(Client client1, int userNumber1) {
-        client = client1;
-        userNumber = userNumber1;
+        Thread thread1 = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (haveNewChange) {
+                    changedArea.setText(changedArea.getText() + "\n" + change);
+                    haveNewChange = false;
+                }
+            }
+        });
+
+        thread1.setDaemon(true);
+        thread1.start();
     }
 }

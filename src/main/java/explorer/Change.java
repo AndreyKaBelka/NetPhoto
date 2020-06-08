@@ -41,6 +41,53 @@ public class Change implements Serializable {
 
     @Override
     public String toString() {
-        return "Тип: " + changeType + " Имя файла: " + old_name + " Путь файла старый: " + old_path + " Новое имя файла: " + new_name + " Новый путь: " + new_path + "\n";
+        StringBuilder string = new StringBuilder("");
+
+        switch (changeType) {
+            case RENAME_FOLDER: {
+                string.append("< Переименование папки :");
+                break;
+            }
+            case DELETE_FOLDER: {
+                string.append("Удаление папки :");
+                break;
+            }
+            case RENAME_PHOTO: {
+                string.append("Переименование фото :");
+                break;
+            }
+            case MOVE_PHOTO: {
+                string.append("Перемещение фото :");
+                break;
+            }
+            case COPY_PHOTO: {
+                string.append("Копирование фото :");
+                break;
+            }
+            case ADD_FOLDER: {
+                string.append("Добавление папки :");
+                break;
+            }
+        }
+
+        if (old_name != null) {
+            string.append("\n").append("Имя: ").append(old_name);
+        }
+
+        if (old_path != null) {
+            string.append("\n").append("Путь: ").append(old_path);
+        }
+
+        if (new_name != null) {
+            string.append("\n").append("Новое имя: ").append(new_name);
+        }
+
+        if (new_path != null) {
+            string.append("\n").append("Новый путь: ").append(new_path);
+        }
+
+        string.append(" >");
+
+        return string.toString();
     }
 }
